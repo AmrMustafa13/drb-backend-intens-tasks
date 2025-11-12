@@ -15,6 +15,8 @@ const config_1 = require("@nestjs/config");
 const db_config_1 = __importDefault(require("./config/db.config"));
 const app_config_1 = __importDefault(require("./config/app.config"));
 const mongoose_1 = require("@nestjs/mongoose");
+const users_module_1 = require("./modules/users/users.module");
+const auth_module_1 = require("./modules/auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,11 +31,11 @@ exports.AppModule = AppModule = __decorate([
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => ({
                     uri: configService.get('database.uri'),
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
                 }),
                 inject: [config_1.ConfigService],
             }),
+            users_module_1.UsersModule,
+            auth_module_1.AuthModule,
         ],
         controllers: [],
         providers: [],
