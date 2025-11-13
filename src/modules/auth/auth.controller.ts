@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
@@ -14,6 +15,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -41,5 +43,17 @@ export class AuthController {
   @Get('profile')
   async getCurrentUserProfile(@Req() req: Request) {
     return await this.authService.getCurrentUserProfile(req.user!);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('profile')
+  async updateCurrentUser(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: Request
+  ) {
+    return await this.authService.updateCurrentUser(
+      req.user!._id as unknown as string,
+      updateUserDto
+    );
   }
 }

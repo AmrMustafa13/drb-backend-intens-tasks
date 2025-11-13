@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Env } from 'src/config/env.validation';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -92,6 +93,24 @@ export class AuthService {
   }
 
   async getCurrentUserProfile(user: UserDocument): Promise<APIResponse> {
+    return {
+      data: user.toJSON(),
+    };
+  }
+
+  async updateCurrentUser(
+    userId: string,
+    updateUserDto: UpdateUserDto
+  ): Promise<APIResponse> {
+    const user = (await this.userModel.findByIdAndUpdate(
+      userId,
+      updateUserDto,
+      {
+        new: true,
+        runValidators: true,
+      }
+    ))!;
+
     return {
       data: user.toJSON(),
     };
