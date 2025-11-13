@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Env } from 'src/config/env.validation';
@@ -18,6 +18,13 @@ export class TokenService {
 
   private hashToken(token: string) {
     return createHash('sha256').update(token).digest('hex');
+  }
+
+  private compareHashedToken(
+    token: string,
+    hashedToken: string | undefined
+  ): boolean {
+    return this.hashToken(token) === hashedToken;
   }
 
   private async generateToken<T extends object>(
@@ -52,5 +59,43 @@ export class TokenService {
     );
 
     return refreshToken;
+  }
+
+  async verifyToken<T extends object>(
+    token: string,
+    secret: string
+  ): Promise<T> {
+    return await this.jwtService.verifyAsync(token, {
+      secret,
+    });
+  }
+
+  async verifyAccessToken(token: string) {
+    try {
+      return await this.verifyToken<UserDocument>(
+        token,
+        this.configService.get<string>('ACCESS_TOKEN_SECRET')
+      );
+    } catch {
+      throw new UnauthorizedException('Access token is invalid or expired');
+    }
+  }
+
+  async verifyRefreshToken(
+    token: string,
+    userRefreshToken: string | undefined
+  ) {
+    try {
+      await this.verifyToken<RefreshTokenPayload>(
+        token,
+        this.configService.get<string>('REFRESH_TOKEN_SECRET')
+      );
+
+      const isValid = this.compareHashedToken(token, userRefreshToken);
+      if (!isValid)
+        throw new UnauthorizedException('Refresh token is invalid or expired');
+    } catch {
+      throw new UnauthorizedException('Refresh token is invalid or expired');
+    }
   }
 }

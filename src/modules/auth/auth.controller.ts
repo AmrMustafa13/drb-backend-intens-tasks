@@ -1,15 +1,19 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -31,5 +35,11 @@ export class AuthController {
     this.authService.sendCookie(res, 'refreshToken', refreshToken!);
 
     return response;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  async getCurrentUserProfile(@Req() req: Request) {
+    return await this.authService.getCurrentUserProfile(req.user!);
   }
 }

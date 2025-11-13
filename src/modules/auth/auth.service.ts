@@ -90,4 +90,10 @@ export class AuthService {
       accessToken,
     };
   }
+
+  async getCurrentUserProfile(user: UserDocument): Promise<APIResponse> {
+    return {
+      data: user.toJSON(),
+    };
+  }
 }

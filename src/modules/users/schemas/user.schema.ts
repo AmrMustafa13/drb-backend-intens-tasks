@@ -5,6 +5,7 @@ import { HydratedDocument } from 'mongoose';
 
 type UserMethods = {
   comparePassword(password: string): Promise<boolean>;
+  toJSON(): object;
 };
 
 export type UserDocument = HydratedDocument<User, UserMethods>;
