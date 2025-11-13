@@ -13,6 +13,7 @@ export class User {
   email: string;
   @Prop({ required: true })
   password: string;
+  @Prop()
   phone?: string;
   @Prop({ default: 'user' })
   role: string;

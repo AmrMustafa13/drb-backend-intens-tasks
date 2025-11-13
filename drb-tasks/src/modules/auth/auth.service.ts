@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { compare } from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-
 @Injectable()
 export class AuthService {
   constructor(

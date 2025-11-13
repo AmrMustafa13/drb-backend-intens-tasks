@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -8,6 +9,8 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserProfileDto } from '../auth/dto/updateUserProfile.dto';
+import { ChangePasswordDto } from '../auth/dto/changePassword.dto';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
@@ -48,5 +51,49 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
+  }
+
+  async updateUserProfile(
+    userId: string,
+    updateUserProfileDto: UpdateUserProfileDto,
+  ) {
+    // const user = await this.userModel
+    //   .findById(userId)
+    //   .select('-password')
+    //   .exec();
+    // if (!user) {
+    //   throw new NotFoundException('User not found');
+    // }
+    // Object.assign(user, updateUserProfileDto);
+    // await user.save();
+    // return user.toObject();
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, updateUserProfileDto, { new: true })
+      .exec();
+
+    console.log('from user service');
+    console.log('updatedUser', updatedUser);
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return updatedUser;
+  }
+
+  async changePassword(userId: string, changePassword: ChangePasswordDto) {
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) throw new NotFoundException('User not found');
+    const isMatch = await bcrypt.compare(
+      changePassword.currentPassword,
+      user.password,
+    );
+    if (!isMatch)
+      throw new BadRequestException('Current Password is incorrect');
+
+    const hashed = await bcrypt.hash(changePassword.newPassword, 10);
+    user.password = hashed;
+    await user.save();
+
+    return 'Password changed successfully';
   }
 }
