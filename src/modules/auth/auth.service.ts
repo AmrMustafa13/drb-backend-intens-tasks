@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -14,6 +15,7 @@ import { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Env } from 'src/config/env.validation';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -113,6 +115,27 @@ export class AuthService {
 
     return {
       data: user.toJSON(),
+    };
+  }
+
+  async changePassword(
+    user: UserDocument,
+    changePasswordDto: ChangePasswordDto
+  ): Promise<APIResponse> {
+    if (!(await user.comparePassword(changePasswordDto.currentPassword)))
+      throw new UnauthorizedException('Current password is incorrect');
+
+    if (changePasswordDto.newPassword === changePasswordDto.currentPassword)
+      throw new BadRequestException(
+        'New password must be different from the current password'
+      );
+
+    user.password = changePasswordDto.newPassword;
+    user.refreshToken = undefined;
+    await user.save();
+
+    return {
+      message: 'Password Changed Successfully',
     };
   }
 }

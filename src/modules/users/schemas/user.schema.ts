@@ -44,8 +44,8 @@ export class User {
   })
   role: Role;
 
-  @Prop()
-  refreshToken?: string;
+  @Prop({ type: String })
+  refreshToken?: string | undefined;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

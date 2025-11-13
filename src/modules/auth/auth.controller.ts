@@ -16,6 +16,7 @@ import { LoginDto } from './dto/login.dto';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -55,5 +56,21 @@ export class AuthController {
       req.user!._id as unknown as string,
       updateUserDto
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('change-password')
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const result = await this.authService.changePassword(
+      req.user!,
+      changePasswordDto
+    );
+
+    res.clearCookie('refreshToken');
+    return result;
   }
 }
