@@ -1,98 +1,123 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# DRB Backend Internship - Week 1: Authentication Module
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is the submission for the Week 1 task of the DRB Backend Internship. It is a complete authentication and authorization system built with **NestJS**, **TypeScript**, and **MongoDB**, featuring a secure **JWT** (JSON Web Tokens) implementation with a **Refresh Token** mechanism.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ✨ Features
 
-## Description
+* **User Registration:** (`POST /auth/register`) - Securely register new users with email/password validation and `bcrypt` hashing.
+* **User Login:** (`POST /auth/login`) - Authenticate users and return an access token and a refresh token.
+* **Secure Refresh Token:** The refresh token is sent to the client via a secure, `HttpOnly` cookie to prevent XSS attacks.
+* **Get Profile:** (`GET /auth/profile`) - A protected route to fetch the currently authenticated user's profile.
+* **Update Profile:** (`PATCH /auth/profile`) - A protected route allowing users to update non-sensitive data (like name and phone).
+* **Change Password:** (`PATCH /auth/change-password`) - A protected route for users to change their password after verifying their current one.
+* **Refresh Access Token:** (`POST /auth/refresh`) - An endpoint that uses the `HttpOnly` refresh token to issue a new access token.
+* **Logout:** (`POST /auth/logout`) - Securely logs a user out by invalidating their refresh token in the database and clearing the cookie.
+* **DTO Validation:** Uses `class-validator` and `class-transformer` for all incoming request bodies.
+* **Protected Routes:** Implements NestJS Guards (`JwtAuthGuard`, `JwtRefreshGuard`) to protect endpoints.
+* **Configuration:** Uses `@nestjs/config` to manage all environment variables.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 🛠️ Tech Stack
 
-```bash
-$ npm install
-```
+* **Framework:** NestJS
+* **Language:** TypeScript
+* **Database:** MongoDB with Mongoose
+* **Authentication:** Passport.js (`passport-jwt`, `passport-local`)
+* **Security:** `bcrypt` for password hashing
+* **Validation:** `class-validator`, `class-transformer`
+* **Configuration:** `@nestjs/config` (`.env`)
+* **API Documentation:** Swagger
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 🚀 Getting Started
 
-# watch mode
-$ npm run start:dev
+### Prerequisites
 
-# production mode
-$ npm run start:prod
-```
+* [Node.js](https://nodejs.org/) (v18 or later recommended)
+* [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+* A running [MongoDB](https://www.mongodb.com/) instance (local or cloud-based like MongoDB Atlas)
+* An API client like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/)
 
-## Run tests
+### Installation & Setup
 
-```bash
-# unit tests
-$ npm run test
+1.  **Clone the repository:**
+    ```bash
+    # Replace with your forked repository URL
+    git clone [https://github.com/YOUR_USERNAME/drb-backend-internship.git](https://github.com/YOUR_USERNAME/drb-backend-internship.git)
+    ```
 
-# e2e tests
-$ npm run test:e2e
+2.  **Navigate to the project directory:**
+    ```bash
+    cd drb-backend-internship
+    ```
 
-# test coverage
-$ npm run test:cov
-```
+3.  **Check out the task branch:**
+    ```bash
+    git checkout week-1
+    ```
 
-## Deployment
+4.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+5.  **Set up environment variables:**
+    Create a `.env` file in the root of the project and add the following variables. See `.env.example` for a template.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+    ```ini
+    # .env
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+    # Application
+    NODE_ENV=development
+    PORT=3000
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+    # Database
+    # Example: mongodb://localhost:27017/drb-auth-week1
+    MONGODB_URI=your_mongodb_connection_string
 
-## Resources
+    # JWT Access Token
+    JWT_ACCESS_SECRET=your-super-secret-access-key
+    JWT_ACCESS_EXPIES_IN=15m
 
-Check out a few resources that may come in handy when working with NestJS:
+    # JWT Refresh Token
+    JWT_REFRESH_SECRET=your-super-secret-refresh-key
+    JWT_REFRESH_EXPIRES_IN=7d
+    ```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+6.  **Run the application (development mode):**
+    ```bash
+    npm run start:dev
+    ```
+    The server will be running at `http://localhost:3000`.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📚 API Documentation
 
-## Stay in touch
+This project uses **Swagger (OpenAPI)** for API documentation. Once the application is running, you can access the interactive API docs at:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**`http://localhost:3000/api`**
 
-## License
+### Endpoints Overview
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Method | Endpoint | Authentication | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/register` | **None** | Register a new user. |
+| `POST` | `/auth/login` | **None** | Log in a user. Returns `accessToken` and sets `refresh_token` cookie. |
+| `GET` | `/auth/profile` | **Access Token** | Get the currently logged-in user's profile. |
+| `PATCH` | `/auth/profile` | **Access Token** | Update the user's name or phone. |
+| `PATCH` | `/auth/change-password` | **Access Token** | Change the user's password. |
+| `POST` | `/auth/refresh` | **Refresh Token** | Use the `HttpOnly` cookie to get a new `accessToken`. |
+| `POST` | `/auth/logout` | **Access Token** | Log the user out and clear the `HttpOnly` cookie. |
+
+---
+
+## 📝 Submission Notes
+
+*(This is where you would add any notes for the reviewer, as requested in the original task description)*
+
+* **Challenges Faced:** (e.g., "Implementing the `HttpOnly` cookie flow in NestJS required careful configuration of the `res.cookie()` method and the `JwtRefreshStrategy`.")
+* **Assumptions Made:** (e.g., "I assumed the 'role' field should default to 'user' upon registration and cannot be set by the user.")
+* **Security:** The refresh token is stored in the database as a **hashed** value using `bcrypt` to prevent token hijacking even if the database is compromised. The `logout` endpoint works by nullifying this stored hash.
