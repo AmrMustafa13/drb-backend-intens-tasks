@@ -31,12 +31,14 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Access token is missing or invalid');
 
     try {
+      // Access token verification and checking if a user existed with this access token
       const payload = await this.tokenService.verifyAccessToken(accessToken);
 
       const user = await this.userModel.findById(payload._id);
       if (!user)
         throw new UnauthorizedException('Access token is invalid or expired');
 
+      // refresh token verification and checking if the same user with the access token had the same provided refresh token
       const { refreshToken } = req.cookies;
       if (!refreshToken)
         throw new UnauthorizedException('Refresh token is invalid or expired');

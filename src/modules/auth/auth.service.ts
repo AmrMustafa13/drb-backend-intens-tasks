@@ -25,6 +25,7 @@ export class AuthService {
     private configService: ConfigService<Env, true>
   ) {}
 
+  // This function is responsible for parsing tokens expiration dates into ms. Ex: 15m -> 15 * 60 * 1000ms
   private parseExpiresInMs(expiresIn: string) {
     const match = expiresIn.match(/^(\d+)([smhd])$/);
     if (!match) throw new Error(`Invalid expiresIn format: ${expiresIn}`);
@@ -51,20 +52,24 @@ export class AuthService {
       maxAge: 7 * 24 * 60 * 60 * 100, // default max age of 7 days
     };
 
+    // Specific max age for refreshToken cookie ... same refreshToken age
     if (name === 'refreshToken')
       options.maxAge = this.parseExpiresInMs(
-        this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN')!
+        this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN')
       );
 
     res.cookie(name, val, options);
   }
 
   async register(registerDto: RegisterDto): Promise<APIResponse> {
+    // Check if a user already exists with this email
     const exist = await this.userModel.exists({ email: registerDto.email });
     if (exist)
       throw new ConflictException('An account with this email already exists');
 
     const userDoc = await this.userModel.create(registerDto);
+
+    // Sanitize the document to get rid of the sensitive fields
     const user = userDoc.toJSON();
 
     const accessToken = await this.tokenService.generateAccessToken(user);
@@ -77,9 +82,11 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<APIResponse> {
     const userDoc = await this.userModel.findOne({ email: loginDto.email });
 
+    // If no user with this email or the given password is not correct ... return an error
     if (!userDoc || !(await userDoc.comparePassword(loginDto.password)))
       throw new UnauthorizedException('Invalid email or password');
 
+    // sanitize
     const user = userDoc.toJSON();
 
     const accessToken = await this.tokenService.generateAccessToken(user);
@@ -95,6 +102,7 @@ export class AuthService {
   }
 
   async getCurrentUserProfile(user: UserDocument): Promise<APIResponse> {
+    // The user is already logged in ... no database query needed
     return {
       data: user.toJSON(),
     };
@@ -108,8 +116,8 @@ export class AuthService {
       userId,
       updateUserDto,
       {
-        new: true,
-        runValidators: true,
+        new: true, // return the new user after update query
+        runValidators: true, // run validators on the updated fields
       }
     ))!;
 
@@ -122,14 +130,17 @@ export class AuthService {
     user: UserDocument,
     changePasswordDto: ChangePasswordDto
   ): Promise<APIResponse> {
+    // Check if the given password is correct
     if (!(await user.comparePassword(changePasswordDto.currentPassword)))
       throw new UnauthorizedException('Current password is incorrect');
 
+    // User must not enter the same password as the old one ... this line of code could also implemented using custom decorator in the dto
     if (changePasswordDto.newPassword === changePasswordDto.currentPassword)
       throw new BadRequestException(
         'New password must be different from the current password'
       );
 
+    // Update using the save method to run the pre save hooks (I need them)
     user.password = changePasswordDto.newPassword;
     user.refreshToken = undefined;
     await user.save();
@@ -140,6 +151,7 @@ export class AuthService {
   }
 
   async logout(user: UserDocument): Promise<APIResponse> {
+    // revoking the refresh token from the user's document will simply log him out ... need to check the user's refresh token validation in the auth guard
     user.refreshToken = undefined;
     await user.save();
 
@@ -156,6 +168,8 @@ export class AuthService {
     const accessToken = await this.tokenService.generateAccessToken(
       user!.toJSON()
     );
+
+    // Refresh token rotation
     const refreshToken = await this.tokenService.generateRefreshToken({
       _id: verifiedToken._id,
     });
