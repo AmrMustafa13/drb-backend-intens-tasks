@@ -11,6 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1');
   app.enableCors();
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -30,3 +31,6 @@ async function bootstrap() {
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();
+function cookieParser(): any {
+  throw new Error('Function not implemented.');
+}
