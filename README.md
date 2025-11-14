@@ -1,169 +1,68 @@
-# DRB Backend Internship Tasks
+# DRB Backend Internship Tasks - Week 1
 
-Welcome to the DRB Backend Internship program! This repository contains weekly tasks designed to enhance your backend development skills.
+A NestJS-based authentication API using NestJS, TypeScript, and MongoDB with JWT-based authentication.
 
-## How to Get Started
+## Setup Instructions
 
-1. **Fork this repository** to your GitHub account
-2. **Clone your forked repository** to your local machine
-3. **Create a branch** named `week-X` (where X is the week number)
-4. **Complete the task** on your branch
-5. **Push your changes** to your forked repository
-6. **Create a Pull Request** back to the main repository when ready for review
+### 1. Clone the Repository
 
----
+```bash
+git clone <repository-url>
+cd drb-backend-intens-tasks
+```
 
-## Week 1: Authentication Module (Nov 11 - Nov 14, 2025)
+### 2. Environment Configuration
 
-### Task Overview
+Create a `.env` file in the root directory based on the `.env.example` template provided in the repository.
 
-Build a complete authentication system using **NestJS**, **TypeScript**, and **MongoDB** with **JWT-based authentication**.
+### 3. Installation & Running
 
-### Technical Stack
+#### Option A: Using Docker (Recommended)
 
-- **Framework**: NestJS
-- **Language**: TypeScript
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
+**Development Mode:**
 
-### Required Features
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
 
-#### 1. User Registration
+**Production Mode:**
 
-- **Endpoint**: `POST /auth/register`
-- **Required Fields**:
-  - Email (must be unique and valid)
-  - Password (minimum 8 characters, with validation)
-  - Name
-  - Optional: Phone number, role
-- **Validations**:
-  - Email format validation
-  - Password strength requirements
-  - Check for existing user
-- **Response**: User object (without password) + Access token
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
 
-#### 2. User Login
+**Stop Services:**
 
-- **Endpoint**: `POST /auth/login`
-- **Required Fields**:
-  - Email
-  - Password
-- **Validations**:
-  - Verify credentials
-  - Check if user exists
-- **Response**: Access token + Refresh token
+```bash
+docker-compose down
 
-#### 3. Get Current User Profile
+# Remove volumes as well
+docker-compose down -v
+```
 
-- **Endpoint**: `GET /auth/profile`
-- **Authentication**: Required (JWT)
-- **Response**: Current user's profile information
+#### Option B: Local Setup
 
-#### 4. Update Profile
+**Install Dependencies:**
 
-- **Endpoint**: `PATCH /auth/profile`
-- **Authentication**: Required (JWT)
-- **Allowed Updates**:
-  - Name
-  - Phone number
-  - Other non-sensitive fields
-- **Response**: Updated user object
+```bash
+npm install
+```
 
-#### 5. Change Password
+**Run the Application:**
 
-- **Endpoint**: `PATCH /auth/change-password`
-- **Authentication**: Required (JWT)
-- **Required Fields**:
-  - Current password
-  - New password
-- **Validations**:
-  - Verify current password
-  - Validate new password strength
-- **Response**: Success message
+```bash
+# Development mode
+npm run start:dev
 
-#### 6. Refresh Token
+# Production mode
+npm run build
+npm run start:prod
+```
 
-- **Endpoint**: `POST /auth/refresh`
-- **Required Fields**:
-  - Refresh token
-- **Response**: New access token
+## Accessing the Application
 
-#### 7. Logout
+Assuming PORT=3000
 
-- **Endpoint**: `POST /auth/logout`
-- **Authentication**: Required (JWT)
-- **Response**: Success message
-
-### Additional Requirements
-
-#### Security Features
-
-- ✅ Password hashing using bcrypt
-- ✅ JWT token generation and validation
-- ✅ Refresh token mechanism
-- ✅ Protected routes using Guards
-- ✅ Input validation and sanitization
-- ✅ Error handling and appropriate status codes
-
-#### Code Quality
-
-- ✅ Follow NestJS best practices
-- ✅ Proper project structure (modules, controllers, services)
-- ✅ Use DTOs (Data Transfer Objects) for validation
-- ✅ Use Decorators for route protection
-- ✅ Environment variables for sensitive data (.env file)
-- ✅ Clean and readable code with comments
-
-#### Database Schema
-
-- User model should include:
-  - `_id` (MongoDB ObjectId)
-  - `email` (unique, required)
-  - `password` (hashed, required)
-  - `name` (required)
-  - `phone` (optional)
-  - `role` (default: 'user')
-  - `refreshToken` (optional, for refresh mechanism)
-  - `createdAt` (timestamp)
-  - `updatedAt` (timestamp)
-
-### Deliverables
-
-1. **Complete NestJS Project**
-
-   - All endpoints implemented and working
-   - Proper folder structure
-   - Configuration files (package.json, tsconfig.json, etc.)
-
-2. **Documentation**
-
-   - README with setup instructions
-   - **Swagger API documentation** integrated into the project
-   - Environment variables documentation
-
-### Evaluation Criteria
-
-- ✅ All endpoints working correctly
-- ✅ Proper error handling
-- ✅ Security best practices implemented
-- ✅ Code organization and structure
-- ✅ Validation and data sanitization
-- ✅ Documentation quality
-- ✅ Git commit history (meaningful commits)
-
-### Submission
-
-1. Push all your code to the `week-1` branch in your forked repository
-2. Create a Pull Request to the main repository
-3. Include a detailed README with setup instructions
-4. Add any additional notes or challenges faced in the PR description
-
-**Deadline**: November 14, 2025
-
----
-
-## Questions?
-
-If you have any questions or need clarification, please reach out to me on WhatsApp.
-
-Good luck! 🚀
+- **API:** http://localhost:3000
+- **Swagger Documentation:** http://localhost:3000/docs
+- **Mongo Express (DB UI):** http://localhost:8081
