@@ -1,9 +1,9 @@
-import { Account } from 'src/modules/accounts/entities/account.entity';
+import { User } from 'src/database/schemas/user.schema';
 
 declare global {
   namespace Express {
     interface Request {
-      account?: Account;
+      user?: Partial<User> & { _id: string };
     }
   }
 }

@@ -43,7 +43,10 @@ export class AuthGuard implements CanActivate {
       }
 
       // Attach user to request
-      request['user'] = user;
+      request['user'] = {
+        ...user,
+        _id: user._id.toString(),
+      };
     } catch {
       throw new UnauthorizedException('Access token is invalid or expired');
     }

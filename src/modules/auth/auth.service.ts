@@ -82,13 +82,13 @@ export class AuthService {
 
     const accessToken = await this.tokenService.generateAccessToken(payload);
 
-    const res: APIResponse = {
+    const result: APIResponse = {
       message: 'Account created successfully',
       data: { ...userData },
       accessToken,
     };
 
-    return res;
+    return result;
   }
 
   async login(loginDto: LoginDto) {
@@ -117,14 +117,20 @@ export class AuthService {
       refreshToken: hashToken(refreshToken),
     });
 
-    const res: APIResponse = {
+    const result: APIResponse = {
       message: 'Logged in successfully',
       accessToken,
       refreshToken,
     };
 
-    return res;
+    return result;
   }
 
-  async logout() {}
+  async logout(id: string) {
+    await this.userModel.findByIdAndUpdate(id, { refreshToken: null });
+    const res: APIResponse = {
+      message: 'Logged out successfully',
+    };
+    return res;
+  }
 }
