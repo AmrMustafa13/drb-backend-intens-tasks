@@ -4,8 +4,8 @@ import { HydratedDocument } from 'mongoose';
 export type UserDocument = HydratedDocument<User>;
 
 export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+  DRIVER = 'driver',
 }
 
 @Schema({ timestamps: true })
@@ -22,7 +22,7 @@ export class User {
   @Prop()
   phone?: string;
 
-  @Prop({ type: String, enum: UserRole, default: UserRole.USER })
+  @Prop({ type: String, enum: UserRole, default: UserRole.CUSTOMER })
   role: UserRole;
 
   @Prop()
