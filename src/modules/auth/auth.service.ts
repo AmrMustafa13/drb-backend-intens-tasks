@@ -125,4 +125,6 @@ export class AuthService {
 
     return res;
   }
+
+  async logout() {}
 }

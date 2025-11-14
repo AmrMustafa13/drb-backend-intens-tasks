@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 import { AccessTokenPayload } from 'src/common/types/api.type';
-import { User } from 'src/database/schemas/user.schema';
 
 @Injectable()
 export class TokenService {
@@ -27,10 +26,8 @@ export class TokenService {
 
   verifyAccessToken = async (token: string) => {
     try {
-      return await this.jwtService.verifyAsync<User>(token, {
-        secret: this.configService.get<AccessTokenPayload>(
-          'ACCESS_TOKEN_SECRET',
-        ),
+      return await this.jwtService.verifyAsync<AccessTokenPayload>(token, {
+        secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
       } as JwtVerifyOptions);
     } catch {
       throw new UnauthorizedException('Access token is invalid or expired');
