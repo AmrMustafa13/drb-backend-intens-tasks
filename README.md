@@ -1,169 +1,115 @@
-# DRB Backend Internship Tasks
+# DRB Auth Backend (Week 1: Authentication Module)
 
-Welcome to the DRB Backend Internship program! This repository contains weekly tasks designed to enhance your backend development skills.
+A small NestJS authentication service used for backend tasks. Implements user registration, login, JWT access + refresh tokens, profile management, and password change with MongoDB (Mongoose). 
 
-## How to Get Started
 
-1. **Fork this repository** to your GitHub account
-2. **Clone your forked repository** to your local machine
-3. **Create a branch** named `week-X` (where X is the week number)
-4. **Complete the task** on your branch
-5. **Push your changes** to your forked repository
-6. **Create a Pull Request** back to the main repository when ready for review
+## Current functionality
+- Register a new user (password hashed with bcrypt)
+- Login (returns accessToken + refreshToken)
+- Refresh tokens (rotate refresh token)
+- Get current user profile (JWT protected)
+- Update profile (JWT protected)
+- Change password (JWT protected)
+- Logout (invalidate refresh token)
 
----
+Built-in behaviors:
+- Input validation via class-validator and global ValidationPipe (transform enabled)
+- JWT secrets read from .env via ConfigService with development fallbacks
+- Mongoose connection via ConfigService
 
-## Week 1: Authentication Module (Nov 11 - Nov 14, 2025)
+## Requirements
+- Node 18+ (or supported LTS)
+- npm/yarn
+- MongoDB (local or remote)
+- Create a `.env` in repository root (see example)
 
-### Task Overview
+## Important environment variables (.env)
+- MONGODB_URI=mongodb://localhost:27017/drb-auth
+- JWT_SECRET=your_access_secret_here
+- JWT_REFRESH_SECRET=your_refresh_secret_here
+- PORT=3000
 
-Build a complete authentication system using **NestJS**, **TypeScript**, and **MongoDB** with **JWT-based authentication**.
 
-### Technical Stack
 
-- **Framework**: NestJS
-- **Language**: TypeScript
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
+## Quick setup
+1. Install deps:
+   npm install
 
-### Required Features
+2. Create `.env` (see above) or use environment variables.
 
-#### 1. User Registration
+3. Run in development:
+   npm run start:dev
+   or
+   NODE_ENV=development npm run start
 
-- **Endpoint**: `POST /auth/register`
-- **Required Fields**:
-  - Email (must be unique and valid)
-  - Password (minimum 8 characters, with validation)
-  - Name
-  - Optional: Phone number, role
-- **Validations**:
-  - Email format validation
-  - Password strength requirements
-  - Check for existing user
-- **Response**: User object (without password) + Access token
+4. App listens on `process.env.PORT || 3000`.
 
-#### 2. User Login
+## API (brief)
+Base URL: http://localhost:3000
 
-- **Endpoint**: `POST /auth/login`
-- **Required Fields**:
-  - Email
-  - Password
-- **Validations**:
-  - Verify credentials
-  - Check if user exists
-- **Response**: Access token + Refresh token
+- POST /auth/register
+  - Body: { "email","password","name", "phone?" }
+  - Returns: { user, accessToken, refreshToken }
 
-#### 3. Get Current User Profile
+- POST /auth/login
+  - Body: { "email","password" }
+  - Returns: { accessToken, refreshToken }
 
-- **Endpoint**: `GET /auth/profile`
-- **Authentication**: Required (JWT)
-- **Response**: Current user's profile information
+- POST /auth/refresh
+  - Body: { "refreshToken" }
+  - Returns: { accessToken, refreshToken }
 
-#### 4. Update Profile
+- GET /auth/profile
+  - Auth: Bearer <accessToken>
+  - Returns: user
 
-- **Endpoint**: `PATCH /auth/profile`
-- **Authentication**: Required (JWT)
-- **Allowed Updates**:
-  - Name
-  - Phone number
-  - Other non-sensitive fields
-- **Response**: Updated user object
+- PATCH /auth/profile
+  - Auth: Bearer <accessToken>
+  - Body: partial profile fields
 
-#### 5. Change Password
+- PATCH /auth/change-password
+  - Auth: Bearer <accessToken>
+  - Body: { "currentPassword","newPassword" }
 
-- **Endpoint**: `PATCH /auth/change-password`
-- **Authentication**: Required (JWT)
-- **Required Fields**:
-  - Current password
-  - New password
-- **Validations**:
-  - Verify current password
-  - Validate new password strength
-- **Response**: Success message
+- POST /auth/logout
+  - Auth: Bearer <accessToken>
 
-#### 6. Refresh Token
+## Validation notes
+- Global ValidationPipe is enabled with transform: true (see src/main.ts). This ensures DTO decorators run and incoming JSON is converted to DTO instances.
+- Register DTO enforces: email format, password complexity (min 8 chars, uppercase, lowercase, number/special), name minimum length.
 
-- **Endpoint**: `POST /auth/refresh`
-- **Required Fields**:
-  - Refresh token
-- **Response**: New access token
+## PowerShell-friendly curl examples
+Register:
+curl --% -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d "{\"email\":\"test@example.com\",\"password\":\"Password123!\",\"name\":\"Test User\"}"
 
-#### 7. Logout
+Login:
+curl --% -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d "{\"email\":\"test@example.com\",\"password\":\"Password123!\"}"
 
-- **Endpoint**: `POST /auth/logout`
-- **Authentication**: Required (JWT)
-- **Response**: Success message
+Refresh:
+curl --% -X POST http://localhost:3000/auth/refresh -H "Content-Type: application/json" -d "{\"refreshToken\":\"<your_refresh_token>\"}"
 
-### Additional Requirements
+## Project structure (relevant files)
+- src/
+  - main.ts               // bootstrap, global ValidationPipe
+  - app.module.ts         // ConfigModule + Mongoose (forRootAsync) + feature modules
+  - auth/
+    - auth.module.ts
+    - auth.service.ts
+    - auth.controller.ts
+    - strategies/
+      - jwt.strategy.ts
+    - dto/
+      - register.dto.ts
+      - login.dto.ts
+      - refresh-token.dto.ts
+      - update-profile.dto.ts
+      - change-password.dto.ts
+    - guards/
+      - jwt-auth.guard.ts
+  - users/
+    - users.module.ts
+    - users.service.ts
+    - schemas/
+      - user.schema.ts
 
-#### Security Features
-
-- ✅ Password hashing using bcrypt
-- ✅ JWT token generation and validation
-- ✅ Refresh token mechanism
-- ✅ Protected routes using Guards
-- ✅ Input validation and sanitization
-- ✅ Error handling and appropriate status codes
-
-#### Code Quality
-
-- ✅ Follow NestJS best practices
-- ✅ Proper project structure (modules, controllers, services)
-- ✅ Use DTOs (Data Transfer Objects) for validation
-- ✅ Use Decorators for route protection
-- ✅ Environment variables for sensitive data (.env file)
-- ✅ Clean and readable code with comments
-
-#### Database Schema
-
-- User model should include:
-  - `_id` (MongoDB ObjectId)
-  - `email` (unique, required)
-  - `password` (hashed, required)
-  - `name` (required)
-  - `phone` (optional)
-  - `role` (default: 'user')
-  - `refreshToken` (optional, for refresh mechanism)
-  - `createdAt` (timestamp)
-  - `updatedAt` (timestamp)
-
-### Deliverables
-
-1. **Complete NestJS Project**
-
-   - All endpoints implemented and working
-   - Proper folder structure
-   - Configuration files (package.json, tsconfig.json, etc.)
-
-2. **Documentation**
-
-   - README with setup instructions
-   - **Swagger API documentation** integrated into the project
-   - Environment variables documentation
-
-### Evaluation Criteria
-
-- ✅ All endpoints working correctly
-- ✅ Proper error handling
-- ✅ Security best practices implemented
-- ✅ Code organization and structure
-- ✅ Validation and data sanitization
-- ✅ Documentation quality
-- ✅ Git commit history (meaningful commits)
-
-### Submission
-
-1. Push all your code to the `week-1` branch in your forked repository
-2. Create a Pull Request to the main repository
-3. Include a detailed README with setup instructions
-4. Add any additional notes or challenges faced in the PR description
-
-**Deadline**: November 14, 2025
-
----
-
-## Questions?
-
-If you have any questions or need clarification, please reach out to me on WhatsApp.
-
-Good luck! 🚀
+## 
