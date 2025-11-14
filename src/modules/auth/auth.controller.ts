@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
@@ -80,5 +81,22 @@ export class AuthController {
   async logout(@Res({ passthrough: true }) res: Response, @Req() req: Request) {
     res.clearCookie('refreshToken');
     return await this.authService.logout(req.user!);
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    if (!('refreshToken' in req.cookies))
+      throw new UnauthorizedException('Refresh token not found in cookies');
+
+    const result = await this.authService.refresh(req.cookies.refreshToken);
+
+    const { refreshToken, ...response } = result;
+    this.authService.sendCookie(res, 'refreshToken', refreshToken!);
+
+    return response;
   }
 }

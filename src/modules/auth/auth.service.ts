@@ -147,4 +147,22 @@ export class AuthService {
       message: 'Logged out successfully',
     };
   }
+
+  async refresh(token: string): Promise<APIResponse> {
+    const verifiedToken = await this.tokenService.verifyRefreshToken(token);
+
+    const user = await this.userModel.findById(verifiedToken._id);
+
+    const accessToken = await this.tokenService.generateAccessToken(
+      user!.toJSON()
+    );
+    const refreshToken = await this.tokenService.generateRefreshToken({
+      _id: verifiedToken._id,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 }

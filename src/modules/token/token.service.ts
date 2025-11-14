@@ -83,17 +83,27 @@ export class TokenService {
 
   async verifyRefreshToken(
     token: string,
-    userRefreshToken: string | undefined
+    userRefreshToken?: string | undefined
   ) {
     try {
-      await this.verifyToken<RefreshTokenPayload>(
+      const verifiedRefreshToken = await this.verifyToken<RefreshTokenPayload>(
         token,
         this.configService.get<string>('REFRESH_TOKEN_SECRET')
       );
 
+      if (!userRefreshToken)
+        userRefreshToken = (
+          await this.userModel
+            .findById(verifiedRefreshToken._id)
+            .select('+refreshToken')
+            .lean()
+        )?.refreshToken;
+
       const isValid = this.compareHashedToken(token, userRefreshToken);
       if (!isValid)
         throw new UnauthorizedException('Refresh token is invalid or expired');
+
+      return verifiedRefreshToken;
     } catch {
       throw new UnauthorizedException('Refresh token is invalid or expired');
     }
