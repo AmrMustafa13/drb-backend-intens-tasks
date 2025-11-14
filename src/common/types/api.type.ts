@@ -3,7 +3,12 @@ export type APIResponse = {
   size?: number;
   message?: string;
   data?: object;
-  timestamp?: string;
   accessToken?: string;
   refreshToken?: string;
+};
+
+export type AccessTokenPayload = {
+  _id: string;
+  email: string;
+  name: string;
 };
