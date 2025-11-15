@@ -1,169 +1,204 @@
-# DRB Backend Internship Tasks
+# NestJS Authentication API
 
-Welcome to the DRB Backend Internship program! This repository contains weekly tasks designed to enhance your backend development skills.
-
-## How to Get Started
-
-1. **Fork this repository** to your GitHub account
-2. **Clone your forked repository** to your local machine
-3. **Create a branch** named `week-X` (where X is the week number)
-4. **Complete the task** on your branch
-5. **Push your changes** to your forked repository
-6. **Create a Pull Request** back to the main repository when ready for review
+A complete authentication system built with NestJS, featuring secure access tokens, refresh tokens, role-based access control, and user profile management. The API uses JWT, bcrypt, and MongoDB to provide a production-ready authentication flow.
 
 ---
 
-## Week 1: Authentication Module (Nov 11 - Nov 14, 2025)
+## 🚀 Features
 
-### Task Overview
+### 🔐 Authentication
+- Register new users (with password hashing)
+- Login with email & password
+- Access Token (7 days)
+- Refresh Token (30 days)
+- Logout (removes refresh token)
+- Change password
 
-Build a complete authentication system using **NestJS**, **TypeScript**, and **MongoDB** with **JWT-based authentication**.
+### 👥 User Features
+- Get profile
+- Update profile
+- Role included inside JWT payload
 
-### Technical Stack
-
-- **Framework**: NestJS
-- **Language**: TypeScript
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
-
-### Required Features
-
-#### 1. User Registration
-
-- **Endpoint**: `POST /auth/register`
-- **Required Fields**:
-  - Email (must be unique and valid)
-  - Password (minimum 8 characters, with validation)
-  - Name
-  - Optional: Phone number, role
-- **Validations**:
-  - Email format validation
-  - Password strength requirements
-  - Check for existing user
-- **Response**: User object (without password) + Access token
-
-#### 2. User Login
-
-- **Endpoint**: `POST /auth/login`
-- **Required Fields**:
-  - Email
-  - Password
-- **Validations**:
-  - Verify credentials
-  - Check if user exists
-- **Response**: Access token + Refresh token
-
-#### 3. Get Current User Profile
-
-- **Endpoint**: `GET /auth/profile`
-- **Authentication**: Required (JWT)
-- **Response**: Current user's profile information
-
-#### 4. Update Profile
-
-- **Endpoint**: `PATCH /auth/profile`
-- **Authentication**: Required (JWT)
-- **Allowed Updates**:
-  - Name
-  - Phone number
-  - Other non-sensitive fields
-- **Response**: Updated user object
-
-#### 5. Change Password
-
-- **Endpoint**: `PATCH /auth/change-password`
-- **Authentication**: Required (JWT)
-- **Required Fields**:
-  - Current password
-  - New password
-- **Validations**:
-  - Verify current password
-  - Validate new password strength
-- **Response**: Success message
-
-#### 6. Refresh Token
-
-- **Endpoint**: `POST /auth/refresh`
-- **Required Fields**:
-  - Refresh token
-- **Response**: New access token
-
-#### 7. Logout
-
-- **Endpoint**: `POST /auth/logout`
-- **Authentication**: Required (JWT)
-- **Response**: Success message
-
-### Additional Requirements
-
-#### Security Features
-
-- ✅ Password hashing using bcrypt
-- ✅ JWT token generation and validation
-- ✅ Refresh token mechanism
-- ✅ Protected routes using Guards
-- ✅ Input validation and sanitization
-- ✅ Error handling and appropriate status codes
-
-#### Code Quality
-
-- ✅ Follow NestJS best practices
-- ✅ Proper project structure (modules, controllers, services)
-- ✅ Use DTOs (Data Transfer Objects) for validation
-- ✅ Use Decorators for route protection
-- ✅ Environment variables for sensitive data (.env file)
-- ✅ Clean and readable code with comments
-
-#### Database Schema
-
-- User model should include:
-  - `_id` (MongoDB ObjectId)
-  - `email` (unique, required)
-  - `password` (hashed, required)
-  - `name` (required)
-  - `phone` (optional)
-  - `role` (default: 'user')
-  - `refreshToken` (optional, for refresh mechanism)
-  - `createdAt` (timestamp)
-  - `updatedAt` (timestamp)
-
-### Deliverables
-
-1. **Complete NestJS Project**
-
-   - All endpoints implemented and working
-   - Proper folder structure
-   - Configuration files (package.json, tsconfig.json, etc.)
-
-2. **Documentation**
-
-   - README with setup instructions
-   - **Swagger API documentation** integrated into the project
-   - Environment variables documentation
-
-### Evaluation Criteria
-
-- ✅ All endpoints working correctly
-- ✅ Proper error handling
-- ✅ Security best practices implemented
-- ✅ Code organization and structure
-- ✅ Validation and data sanitization
-- ✅ Documentation quality
-- ✅ Git commit history (meaningful commits)
-
-### Submission
-
-1. Push all your code to the `week-1` branch in your forked repository
-2. Create a Pull Request to the main repository
-3. Include a detailed README with setup instructions
-4. Add any additional notes or challenges faced in the PR description
-
-**Deadline**: November 14, 2025
+### 🛡 Security
+- Hashed refresh tokens
+- Passport strategies (Local, JWT, Refresh)
+- Guards for protected routes
+- Environment variables for secrets
+- Follows best practices for token handling
 
 ---
 
-## Questions?
+## 📦 Technologies Used
 
-If you have any questions or need clarification, please reach out to me on WhatsApp.
+- **NestJS** - Progressive Node.js framework
+- **TypeScript** - Type-safe development
+- **MongoDB / Mongoose** - Database and ODM
+- **JWT** - Access + Refresh tokens
+- **Passport.js** - Authentication middleware
+- **bcrypt** - Password hashing
+- **Express** - HTTP server
 
-Good luck! 🚀
+---
+
+## 📁 Project Structure
+```
+src/
+├── auth/
+│   ├── dto/
+│   ├── guards/
+│   ├── strategies/
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   └── auth.module.ts
+│
+├── users/
+│   ├── users.service.ts
+│   ├── users.controller.ts
+│   └── users.module.ts
+│
+└── main.ts
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the root directory:
+```env
+MONGO_URI=mongodb://localhost:27017/mydb
+JWT_SECRET=your_access_token_secret
+JWT_REFRESH_SECRET=your_refresh_token_secret
+PORT=3000
+```
+
+---
+
+## 🧪 Installation & Running the Project
+
+### Install dependencies
+```bash
+npm install
+```
+
+### Start development server
+```bash
+npm run start:dev
+```
+
+Server will run at: **http://localhost:3000**
+
+---
+
+## 🔄 Authentication Flow (Access + Refresh Tokens)
+
+### 1️⃣ Login
+User logs in → receives:
+- `accessToken` (valid 7 days)
+- `refreshToken` (valid 30 days)
+
+Refresh token is hashed and stored in DB.
+
+### 2️⃣ Accessing Protected Routes
+Send header:
+```
+Authorization: Bearer <accessToken>
+```
+- **Guard**: `JwtAuthGuard`
+- **Strategy**: `jwt`
+
+### 3️⃣ Refreshing Access Token
+```http
+POST /auth/refresh
+```
+
+**Body:**
+```json
+{
+  "refreshToken": "<your-refresh-token>"
+}
+```
+
+- **Guard**: `JwtRefreshGuard`
+- **Strategy**: `jwt-refresh`
+
+**Flow:**
+1. Decode refresh token
+2. Find user
+3. Compare hashed refresh token
+4. Issue new access token
+
+### 4️⃣ Logout
+Removes stored refresh token:
+```http
+POST /auth/logout
+```
+
+---
+
+## 📘 API Endpoints
+
+### 🔐 Auth Routes
+
+| Method | Endpoint | Description | Guard |
+|--------|----------|-------------|-------|
+| `POST` | `/auth/register` | Register new user | None |
+| `POST` | `/auth/login` | Login user | `LocalAuthGuard` |
+| `GET` | `/auth/profile` | Get current user | `JwtAuthGuard` |
+| `PATCH` | `/auth/profile` | Update profile | `JwtAuthGuard` |
+| `POST` | `/auth/refresh` | Refresh access token | `JwtRefreshGuard` |
+| `POST` | `/auth/logout` | Logout user | `JwtAuthGuard` |
+| `PATCH` | `/auth/change-password` | Change password | `JwtAuthGuard` |
+
+---
+
+## 📝 Example Requests
+
+### Register
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "name": "John Doe"
+}
+```
+
+### Login
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+### Get Profile
+```http
+GET /auth/profile
+Authorization: Bearer <accessToken>
+```
+
+### Refresh Token
+```http
+POST /auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "<your-refresh-token>"
+}
+```
+
+---
+
+## 🔒 Security Best Practices
+
+- ✅ Passwords hashed with bcrypt
+- ✅ JWT secrets stored in environment variables
+- ✅ Token expiration implemented
+- ✅ Role-based access control ready
+- ✅ Input validation with class-validator
+- ✅ Protected routes with guards
