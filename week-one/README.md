@@ -1,98 +1,207 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Authentication API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust authentication system built with NestJS, Prisma, MongoDB, and JWT tokens.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- User registration and login
+- JWT-based authentication (access & refresh tokens)
+- Password hashing with bcrypt
+- Password change functionality
+- Token refresh mechanism
+- User profile management
+- MongoDB integration with Prisma ORM
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **NestJS** - Progressive Node.js framework
+- **Prisma** - Next-generation ORM
+- **MongoDB** - NoSQL database
+- **JWT** - JSON Web Tokens for authentication
+- **bcrypt** - Password hashing
+- **TypeScript** - Type-safe development
+- **Docker** - Containerization
 
-```bash
-$ npm install
+## Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- MongoDB instance (local or remote)
+- Docker and Docker Compose (optional, for containerized setup)
+
+## Installation
+
+### Option 1: Local Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd week-one
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   Create a `.env` file in the root directory or use the existing one:
+
+   ```env
+   # Database
+   DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/database-name"
+
+   # Bcrypt
+   BCRYPT_SALT_ROUNDS=10
+
+   # JWT Access Token
+   JWT_ACCESS_SECRET=your_strong_access_secret_here
+   JWT_ACCESS_EXPIRATION=15m
+
+   # JWT Refresh Token
+   JWT_REFRESH_SECRET=your_strong_refresh_secret_here
+   JWT_REFRESH_EXPIRATION=7d
+
+   # Application
+   PORT=5050
+   ```
+
+4. **Generate Prisma Client**
+
+   ```bash
+   npx prisma generate
+   ```
+
+5. **Push database schema** (for MongoDB)
+
+   ```bash
+   npx prisma db push
+   ```
+
+6. **Start the development server**
+   ```bash
+   npm run start:dev
+   ```
+
+The API will be available at `http://localhost:5050`
+
+## API Endpoints
+
+### Authentication
+
+#### Register
+
+- **POST** `/auth/register`
+  ```json
+  {
+  	"email": "user@example.com",
+  	"password": "password123",
+  	"name": "John Doe",
+  	"phone": "+1234567890"
+  }
+  ```
+
+#### Login
+
+- **POST** `/auth/login`
+  ```json
+  {
+  	"email": "user@example.com",
+  	"password": "password123"
+  }
+  ```
+
+#### Refresh Token
+
+- **POST** `/auth/refresh`
+  ```json
+  {
+  	"refreshToken": "your-refresh-token",
+  	"userId": "user-id"
+  }
+  ```
+
+#### Logout
+
+- **POST** `/auth/logout`
+  - Requires: Bearer Token (Authorization header)
+
+#### Change Password
+
+- **PATCH** `/auth/change-password`
+  - Requires: Bearer Token (Authorization header)
+  ```json
+  {
+  	"currentPassword": "oldpassword123",
+  	"newPassword": "newpassword123"
+  }
+  ```
+
+### User
+
+#### Get Profile
+
+- **GET** `/user/profile`
+  - Requires: Bearer Token (Authorization header)
+
+#### Update Profile
+
+- **PATCH** `/user/profile`
+  - Requires: Bearer Token (Authorization header)
+  ```json
+  {
+  	"name": "Updated Name",
+  	"phone": "+9876543210"
+  }
+  ```
+
+
+## Project Structure
+
+```
+week-one/
+├── src/
+│   ├── auth/                    # Authentication module
+│   │   ├── dto/                 # Data transfer objects
+│   │   ├── guards/              # Auth guards (JWT, Refresh Token)
+│   │   ├── strategies/          # Passport strategies
+│   │   ├── Interfaces/          # TypeScript interfaces
+│   │   ├── auth.controller.ts   # Auth endpoints
+│   │   ├── auth.service.ts      # Auth business logic
+│   │   └── auth.module.ts       # Auth module definition
+│   ├── user/                    # User module
+│   │   ├── dto/                 # User DTOs
+│   │   ├── user.controller.ts   # User endpoints
+│   │   ├── user.service.ts      # User business logic
+│   │   └── user.module.ts       # User module definition
+│   ├── prisma/                  # Prisma module
+│   │   ├── prisma.service.ts    # Prisma client service
+│   │   └── prisma.module.ts     # Prisma module definition
+│   ├── app.module.ts            # Root module
+│   └── main.ts                  # Application entry point
+├── prisma/
+│   └── schema.prisma            # Database schema
+├── test/                        # Test files
+├── .env                         # Environment variables (not in git)
+├── .env.example                 # Environment variables template
+├── Dockerfile                   # Docker configuration
+├── docker-compose.yml           # Docker Compose configuration
+├── .dockerignore                # Docker ignore file
+├── package.json                 # Dependencies and scripts
+└── README.md                    # This file
 ```
 
-## Compile and run the project
+## Environment Variables
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Variable                 | Description                      | Default | Required |
+| ------------------------ | -------------------------------- | ------- | -------- |
+| `DATABASE_URL`           | MongoDB connection string        | -       | Yes      |
+| `BCRYPT_SALT_ROUNDS`     | Salt rounds for password hashing | 10      | Yes      |
+| `JWT_ACCESS_SECRET`      | Secret for access tokens         | -       | Yes      |
+| `JWT_ACCESS_EXPIRATION`  | Access token expiration          | 15m     | Yes      |
+| `JWT_REFRESH_SECRET`     | Secret for refresh tokens        | -       | Yes      |
+| `JWT_REFRESH_EXPIRATION` | Refresh token expiration         | 7d      | Yes      |
+| `PORT`                   | Application port                 | 5050    | No       |

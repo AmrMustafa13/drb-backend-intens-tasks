@@ -121,7 +121,6 @@ export class AuthService {
 		};
 		const accessToken = await this.getAccessToken(payload);
 
-
 		const refreshPayload: JwtPayload = {
 			sub: user.id,
 			email: user.email,
@@ -163,38 +162,15 @@ export class AuthService {
 	}
 
 	async refreshTokens(userId: string, refreshToken: string) {
-		const user = await this.prisma.user.findUnique({
-			where: { id: userId },
-		});
+		const user = await this.prisma.user.findUnique({ where: { id: userId } });
+		if (!user || !user.refreshToken) throw new UnauthorizedException();
 
-		if (!user || !user.refreshToken) {
-			throw new UnauthorizedException('Access Denied');
-		}
+		const matches = await bcrypt.compare(refreshToken, user.refreshToken);
+		if (!matches) throw new UnauthorizedException();
 
-		const refreshTokenMatches = await bcrypt.compare(
-			refreshToken,
-			user.refreshToken,
-		);
-
-		if (!refreshTokenMatches) {
-			throw new UnauthorizedException('Access Denied');
-		}
-
-		const payload: JwtPayload = {
-			sub: user.id,
-			email: user.email,
-			role: user.role,
-		};
-
-		const newAccessToken = await this.getAccessToken(payload);
-
-		const refreshPayload: JwtPayload = {
-			sub: user.id,
-			email: user.email,
-			role: user.role,
-		};
-		const newRefreshToken = await this.getRefreshToken(refreshPayload);
-
+		const payload = { sub: user.id, email: user.email, role: user.role };
+		const accessToken = await this.getAccessToken(payload);
+		const newRefreshToken = await this.getRefreshToken(payload);
 		const saltRounds = parseInt(
 			this.config.get('BCRYPT_SALT_ROUNDS') || '10',
 			10,
@@ -206,10 +182,7 @@ export class AuthService {
 			data: { refreshToken: hashedRefresh },
 		});
 
-		return {
-			accessToken: newAccessToken,
-			refreshToken: newRefreshToken,
-		};
+		return { accessToken, refreshToken: newRefreshToken };
 	}
 
 	async changePassword(
@@ -225,10 +198,7 @@ export class AuthService {
 			throw new UnauthorizedException('User not found');
 		}
 
-		const passwordMatches = await bcrypt.compare(
-			currentPassword,
-			user.password,
-		);
+		const passwordMatches = await bcrypt.compare(currentPassword, user.password);
 
 		if (!passwordMatches) {
 			throw new UnauthorizedException('Current password is incorrect');
