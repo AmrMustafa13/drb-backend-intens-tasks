@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 
@@ -87,6 +88,22 @@ export class AuthController {
     );
 
     res.clearCookie('refreshToken');
+    return result;
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    if (!('refreshToken' in req.cookies))
+      throw new UnauthorizedException('Refresh token not found in cookies');
+
+    const { refreshToken, ...result } = await this.authService.refresh(
+      req.cookies.refreshToken as string,
+    );
+    this.authService.sendCookie(res, 'refreshToken', refreshToken!);
     return result;
   }
 }

@@ -193,6 +193,40 @@ export class AuthService {
     return result;
   }
 
+  async refresh(refreshToken: string) {
+    const verifiedToken =
+      await this.tokenService.verifyRefreshToken(refreshToken);
+
+    const user = await this.userModel
+      .findById(verifiedToken.id)
+      .select('_id email name')
+      .lean();
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const payload: AccessTokenPayload = {
+      ...user,
+      _id: user._id.toString(),
+    };
+
+    const accessToken = await this.tokenService.generateAccessToken(payload);
+    const rotatedRefreshToken = await this.tokenService.generateRefreshToken(
+      payload._id,
+    );
+
+    await this.userModel.findByIdAndUpdate(user._id, {
+      refreshToken: hashToken(rotatedRefreshToken),
+    });
+
+    const result: APIResponse = {
+      accessToken,
+      refreshToken,
+    };
+    return result;
+  }
+
   async logout(id: string) {
     await this.userModel.findByIdAndUpdate(id, { refreshToken: null });
     const result: APIResponse = {
