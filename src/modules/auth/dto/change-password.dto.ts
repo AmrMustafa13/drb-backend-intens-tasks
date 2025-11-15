@@ -1,15 +1,9 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { SignupDto } from './signup.dto';
 import {
   IsNotEmpty,
   IsString,
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
-
-export class UpdateProfileDto extends PartialType(
-  OmitType(SignupDto, ['password'] as const),
-) {}
 
 export class ChangePasswordDto {
   @IsString()

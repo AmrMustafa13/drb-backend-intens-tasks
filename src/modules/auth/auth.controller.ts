@@ -17,7 +17,8 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
-import { ChangePasswordDto, UpdateProfileDto } from './dto/updateProfile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,20 +40,8 @@ export class AuthController {
     return result;
   }
 
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const user = req['user'];
-
-    const result = await this.authService.logout(user!._id.toString());
-
-    res.clearCookie('refreshToken');
-    return result;
-  }
-
   @Get('profile')
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   getUserProfile(@Req() req: Request) {
     const { user } = req;
@@ -68,7 +57,7 @@ export class AuthController {
   ) {
     const { user } = req;
     return await this.authService.updateUserProfile(
-      user!._id,
+      user!._id.toString(),
       updateProfileDto,
     );
   }
@@ -83,7 +72,7 @@ export class AuthController {
   ) {
     const { user } = req;
     const result = await this.authService.changePassword(
-      user!._id,
+      user!._id.toString(),
       changePasswordDto,
     );
 
@@ -104,6 +93,18 @@ export class AuthController {
       req.cookies.refreshToken as string,
     );
     this.authService.sendCookie(res, 'refreshToken', refreshToken!);
+    return result;
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const user = req.user!;
+
+    const result = await this.authService.logout(user);
+
+    res.clearCookie('refreshToken');
     return result;
   }
 }

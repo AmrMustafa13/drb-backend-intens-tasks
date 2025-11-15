@@ -34,10 +34,7 @@ export class AuthGuard implements CanActivate {
       // Verify the access token
       const payload = await this.tokenService.verifyAccessToken(accessToken);
 
-      const user = await this.userModel
-        .findById(payload._id)
-        .select('-password')
-        .lean();
+      const user = await this.userModel.findById(payload._id);
 
       if (!user) {
         throw new UnauthorizedException('User not found');
@@ -47,13 +44,9 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException(
           'User is logged out. Please login again',
         );
-      delete user.refreshToken;
 
       // Attach user to request
-      request['user'] = {
-        ...user,
-        _id: user._id.toString(),
-      };
+      request.user = user;
     } catch (err) {
       if (err instanceof ForbiddenException) throw err;
       if (err instanceof UnauthorizedException) throw err;

@@ -17,7 +17,8 @@ import { LoginDto } from './dto/login.dto';
 import { TokenService } from '../token/token.service';
 import { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { ChangePasswordDto, UpdateProfileDto } from './dto/updateProfile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -88,7 +89,7 @@ export class AuthService {
 
     const result: APIResponse = {
       message: 'Account created successfully',
-      data: { ...userData },
+      data: user.cleanUser(),
       accessToken,
     };
 
@@ -130,13 +131,9 @@ export class AuthService {
     return result;
   }
 
-  getUserProfile(
-    user: Partial<User> & {
-      _id: string;
-    },
-  ) {
+  getUserProfile(user: UserDocument) {
     const result: APIResponse = {
-      data: user,
+      data: user.cleanUser(),
     };
 
     return result;
@@ -148,13 +145,12 @@ export class AuthService {
         .findByIdAndUpdate(_id, updateProfileDto, {
           new: true,
           runValidators: true,
-          select: '-password -refreshToken',
         })
         .lean();
 
       const result: APIResponse = {
         message: 'Account updated successfully',
-        data: updatedUser!,
+        data: updatedUser!.cleanUser,
       };
       return result;
     } catch (error) {
@@ -174,17 +170,17 @@ export class AuthService {
         'New password must be different from current password',
       );
 
-    const user = await this.userModel.findById(_id);
+    const user = (await this.userModel.findById(_id))!;
 
-    const correctPass = await compareHash(currentPassword, user!.password);
+    const correctPass = await compareHash(currentPassword, user.password);
     if (!correctPass)
       throw new UnauthorizedException('Current password is incorrect');
 
     const hashedPassword = await hashVal(newPassword);
-    user!.password = hashedPassword;
-    user!.refreshToken = undefined;
+    user.password = hashedPassword;
+    user.refreshToken = undefined;
 
-    await user!.save();
+    await user.save();
 
     const result: APIResponse = {
       message: 'Password changed successfully',
@@ -216,9 +212,8 @@ export class AuthService {
       payload._id,
     );
 
-    await this.userModel.findByIdAndUpdate(user._id, {
-      refreshToken: hashToken(rotatedRefreshToken),
-    });
+    user.refreshToken = hashToken(rotatedRefreshToken);
+    await user.save();
 
     const result: APIResponse = {
       accessToken,
@@ -227,8 +222,10 @@ export class AuthService {
     return result;
   }
 
-  async logout(id: string) {
-    await this.userModel.findByIdAndUpdate(id, { refreshToken: null });
+  async logout(user: UserDocument) {
+    user.refreshToken = undefined;
+    await user.save();
+
     const result: APIResponse = {
       message: 'Logged out successfully',
     };

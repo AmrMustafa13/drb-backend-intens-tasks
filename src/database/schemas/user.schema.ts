@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export type UserDocument = HydratedDocument<User>;
+type UserMethods = {
+  cleanUser(): object;
+};
+
+export type UserDocument = HydratedDocument<User, UserMethods>;
 
 export enum UserRole {
   CUSTOMER = 'customer',
@@ -30,3 +34,10 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.methods.cleanUser = function () {
+  const user = (this as UserDocument).toObject();
+  const { password: _, refreshToken: __, ...cleanUser } = user;
+
+  return cleanUser;
+};
