@@ -16,10 +16,6 @@ const validatedEnvVars = z
     PORT: z.coerce.number().int().min(0).max(65535).default(3000),
     NODE_ENV: z.enum(['development', 'production']).default('development'),
 
-    LOG_LEVEL: z
-      .enum(['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'])
-      .default('info'),
-
     ACCESS_TOKEN_SECRET: z.string().min(1),
     ACCESS_TOKEN_EXPIRES_IN: jwtValidationSchema(),
 

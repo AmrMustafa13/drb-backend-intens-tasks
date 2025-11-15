@@ -1,6 +1,3 @@
-import { Model } from 'mongoose';
-import { MongoError } from 'mongodb';
-import { InjectModel } from '@nestjs/mongoose';
 import {
   BadRequestException,
   ConflictException,
@@ -8,17 +5,20 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { MongoError } from 'mongodb';
+import { InjectModel } from '@nestjs/mongoose';
 
-import { SignupDto } from './dto/signup.dto';
-import { compareHash, hashToken, hashVal } from 'src/utils/functions';
-import { AccessTokenPayload, APIResponse } from 'src/common/types/api.type';
-import { User, UserDocument } from 'src/database/schemas/user.schema';
 import { LoginDto } from './dto/login.dto';
-import { TokenService } from '../token/token.service';
-import { CookieOptions, Response } from 'express';
+import { SignupDto } from './dto/signup.dto';
 import { ConfigService } from '@nestjs/config';
+import { CookieOptions, Response } from 'express';
+import { TokenService } from '../token/token.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { compareHash, hashToken, hashVal } from 'src/utils/functions';
+import { User, UserDocument } from 'src/database/schemas/user.schema';
+import { AccessTokenPayload, APIResponse } from 'src/common/types/api.type';
 
 @Injectable()
 export class AuthService {
@@ -65,6 +65,7 @@ export class AuthService {
   }
 
   async register(signupDto: SignupDto) {
+    // check if user exists
     let user = await this.userModel.findOne({ email: signupDto.email });
     if (user) {
       throw new ConflictException('An account with this email already exists');
@@ -79,6 +80,7 @@ export class AuthService {
       password: hashedPassword,
     });
 
+    // create access token
     const payload: AccessTokenPayload = {
       _id: user._id.toString(),
       email: user.email,
@@ -99,10 +101,12 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
+    // check if email matches no account
     const user = await this.userModel.findOne({ email });
     if (!user)
       throw new NotFoundException('Wrong email or password. Please try again');
 
+    // compare password hashes
     const correctPass = await compareHash(password, user.password);
     if (!correctPass)
       throw new NotFoundException('Wrong email or password. Please try again');
@@ -118,6 +122,7 @@ export class AuthService {
       user._id.toString(),
     );
 
+    // save refresh token in the database
     await this.userModel.findByIdAndUpdate(user._id, {
       refreshToken: hashToken(refreshToken),
     });
@@ -132,6 +137,7 @@ export class AuthService {
   }
 
   getUserProfile(user: UserDocument) {
+    // user already in the request
     const result: APIResponse = {
       data: user.cleanUser(),
     };
@@ -144,7 +150,7 @@ export class AuthService {
       const updatedUser = await this.userModel
         .findByIdAndUpdate(_id, updateProfileDto, {
           new: true,
-          runValidators: true,
+          runValidators: true, // run schema validators before save
         })
         .lean();
 
@@ -154,6 +160,7 @@ export class AuthService {
       };
       return result;
     } catch (error) {
+      // handle duplicate key error
       if (error instanceof MongoError && error.code === 11000)
         throw new ConflictException(
           'An account with this email already exists',
