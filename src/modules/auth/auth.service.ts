@@ -2,9 +2,11 @@ import { Model } from 'mongoose';
 import { MongoError } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 import { SignupDto } from './dto/signup.dto';
@@ -15,7 +17,7 @@ import { LoginDto } from './dto/login.dto';
 import { TokenService } from '../token/token.service';
 import { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { ChangePasswordDto, UpdateProfileDto } from './dto/updateProfile.dto';
 
 @Injectable()
 export class AuthService {
@@ -162,6 +164,33 @@ export class AuthService {
         );
       throw error;
     }
+  }
+
+  async changePassword(_id: string, changePasswordDto: ChangePasswordDto) {
+    const { currentPassword, newPassword } = changePasswordDto;
+
+    if (currentPassword === newPassword)
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
+
+    const user = await this.userModel.findById(_id);
+
+    const correctPass = await compareHash(currentPassword, user!.password);
+    if (!correctPass)
+      throw new UnauthorizedException('Current password is incorrect');
+
+    const hashedPassword = await hashVal(newPassword);
+    user!.password = hashedPassword;
+    user!.refreshToken = undefined;
+
+    await user!.save();
+
+    const result: APIResponse = {
+      message: 'Password changed successfully',
+    };
+
+    return result;
   }
 
   async logout(id: string) {

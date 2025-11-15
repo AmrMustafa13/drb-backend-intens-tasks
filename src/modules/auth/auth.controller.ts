@@ -16,7 +16,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
-import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { ChangePasswordDto, UpdateProfileDto } from './dto/updateProfile.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -70,5 +70,23 @@ export class AuthController {
       user!._id,
       updateProfileDto,
     );
+  }
+
+  @Patch('change-password')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async changePassword(
+    @Req() req: Request,
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user } = req;
+    const result = await this.authService.changePassword(
+      user!._id,
+      changePasswordDto,
+    );
+
+    res.clearCookie('refreshToken');
+    return result;
   }
 }
