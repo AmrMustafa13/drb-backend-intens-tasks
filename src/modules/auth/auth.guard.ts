@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -35,20 +36,31 @@ export class AuthGuard implements CanActivate {
 
       const user = await this.userModel
         .findById(payload._id)
-        .select('-password -refreshToken')
+        .select('-password')
         .lean();
 
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
 
+      if (!user.refreshToken)
+        throw new UnauthorizedException(
+          'User is logged out. Please login again',
+        );
+      delete user.refreshToken;
+
       // Attach user to request
       request['user'] = {
         ...user,
         _id: user._id.toString(),
       };
-    } catch {
-      throw new UnauthorizedException('Access token is invalid or expired');
+    } catch (err) {
+      if (err instanceof ForbiddenException) throw err;
+      if (err instanceof UnauthorizedException) throw err;
+
+      throw new UnauthorizedException(
+        'Access/Refresh token is invalid or expired',
+      );
     }
 
     return true;

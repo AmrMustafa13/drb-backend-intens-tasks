@@ -126,11 +126,23 @@ export class AuthService {
     return result;
   }
 
+  getUserProfile(
+    user: Partial<User> & {
+      _id: string;
+    },
+  ) {
+    const result: APIResponse = {
+      data: user,
+    };
+
+    return result;
+  }
+
   async logout(id: string) {
     await this.userModel.findByIdAndUpdate(id, { refreshToken: null });
-    const res: APIResponse = {
+    const result: APIResponse = {
       message: 'Logged out successfully',
     };
-    return res;
+    return result;
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -45,5 +46,13 @@ export class AuthController {
 
     res.clearCookie('refreshToken');
     return result;
+  }
+
+  @Get('profile')
+  @HttpCode(HttpStatus.FOUND)
+  @UseGuards(AuthGuard)
+  getUserProfile(@Req() req: Request) {
+    const { user } = req;
+    return this.authService.getUserProfile(user!);
   }
 }
