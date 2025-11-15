@@ -1,4 +1,5 @@
 import { Model } from 'mongoose';
+import { MongoError } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   ConflictException,
@@ -14,6 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import { TokenService } from '../token/token.service';
 import { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { UpdateProfileDto } from './dto/updateProfile.dto';
 
 @Injectable()
 export class AuthService {
@@ -136,6 +138,32 @@ export class AuthService {
     };
 
     return result;
+  }
+
+  async updateUserProfile(_id: string, updateProfileDto: UpdateProfileDto) {
+    try {
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        _id,
+        updateProfileDto,
+        {
+          new: true,
+          runValidators: true,
+          select: '-password -refreshToken',
+        },
+      );
+
+      const result: APIResponse = {
+        message: 'Account updated successfully',
+        data: updatedUser!,
+      };
+      return result;
+    } catch (error) {
+      if (error instanceof MongoError && error.code === 11000)
+        throw new ConflictException(
+          'An account with this email already exists',
+        );
+      throw error;
+    }
   }
 
   async logout(id: string) {

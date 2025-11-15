@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
@@ -15,6 +16,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
+import { UpdateProfileDto } from './dto/updateProfile.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -54,5 +56,19 @@ export class AuthController {
   getUserProfile(@Req() req: Request) {
     const { user } = req;
     return this.authService.getUserProfile(user!);
+  }
+
+  @Patch('profile')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async updateUserProfile(
+    @Req() req: Request,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    const { user } = req;
+    return await this.authService.updateUserProfile(
+      user!._id,
+      updateProfileDto,
+    );
   }
 }
