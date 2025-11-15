@@ -142,15 +142,13 @@ export class AuthService {
 
   async updateUserProfile(_id: string, updateProfileDto: UpdateProfileDto) {
     try {
-      const updatedUser = await this.userModel.findByIdAndUpdate(
-        _id,
-        updateProfileDto,
-        {
+      const updatedUser = await this.userModel
+        .findByIdAndUpdate(_id, updateProfileDto, {
           new: true,
           runValidators: true,
           select: '-password -refreshToken',
-        },
-      );
+        })
+        .lean();
 
       const result: APIResponse = {
         message: 'Account updated successfully',
