@@ -11,30 +11,43 @@ import {
 import { VehicleType } from '../vehicles.enums';
 import { Schema } from 'mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class CreateVehicleDto {
   @ApiProperty({
     description: 'Vehicle plate number',
     example: 'ABC-1234',
   })
-  @IsString({ message: 'plateNumber must be a string' })
-  @IsNotEmpty({ message: 'plateNumber is cannot be empty' })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING'),
+  })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.NOT_EMPTY'),
+  })
   plateNumber: string;
 
   @ApiProperty({
     description: 'Vehicle model',
     example: 'Corolla',
   })
-  @IsString({ message: 'model must be a string' })
-  @IsNotEmpty({ message: 'model is cannot be empty' })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING'),
+  })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.NOT_EMPTY'),
+  })
   model: string;
 
   @ApiProperty({
     description: 'Vehicle manufacturer',
     example: 'Toyota',
   })
-  @IsString({ message: 'manufacturer must be a string' })
-  @IsNotEmpty({ message: 'manufacturer is cannot be empty' })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING'),
+  })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.NOT_EMPTY'),
+  })
   manufacturer: string;
 
   @ApiProperty({
@@ -43,13 +56,22 @@ export class CreateVehicleDto {
     minimum: 1900,
     maximum: new Date().getFullYear() + 1,
   })
-  @IsNumber({}, { message: 'year must be a number' })
-  @IsNotEmpty({ message: 'year is cannot be empty' })
+  @IsNumber(
+    {},
+    {
+      message: i18nValidationMessage('validation.IS_NUMBER'),
+    }
+  )
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.NOT_EMPTY'),
+  })
   @Min(1900, {
-    message: 'year must be 1900 or later',
+    message: i18nValidationMessage('validation.MIN_YEAR', {
+      property: 1900,
+    }),
   })
   @Max(new Date().getFullYear() + 1, {
-    message: 'year cannot be in the future',
+    message: i18nValidationMessage('validation.MAX_YEAR'),
   })
   year: number;
 
@@ -58,15 +80,21 @@ export class CreateVehicleDto {
     enum: VehicleType,
     example: VehicleType.CAR,
   })
-  @IsEnum(VehicleType, { message: 'Invalid vehicle type' })
-  @IsNotEmpty({ message: 'type is cannot be empty' })
+  @IsEnum(VehicleType, {
+    message: i18nValidationMessage('validation.IS_ENUM'),
+  })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.NOT_EMPTY'),
+  })
   type: VehicleType;
 
   @ApiPropertyOptional({
     description: 'SIM card number for vehicle tracking',
     example: '89014104271490001234',
   })
-  @IsString({ message: 'simNumber must be a string' })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING'),
+  })
   @IsOptional()
   simNumber?: string;
 
@@ -74,7 +102,9 @@ export class CreateVehicleDto {
     description: 'GPS device ID',
     example: 'GPS-TOY-001',
   })
-  @IsString({ message: 'deviceId must be a string' })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING'),
+  })
   @IsOptional()
   deviceId?: string;
 
@@ -82,7 +112,9 @@ export class CreateVehicleDto {
     description: 'MongoDB ObjectId of the assigned driver',
     example: '674b1234567890abcdef0001',
   })
-  @IsMongoId({ message: 'driverId must be a valid MongoDB ObjectId' })
+  @IsMongoId({
+    message: i18nValidationMessage('validation.IS_MONGODB_ID'),
+  })
   @IsOptional()
   driverId?: Schema.Types.ObjectId;
 }

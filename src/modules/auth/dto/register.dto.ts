@@ -7,6 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class RegisterDto {
   @ApiProperty({
@@ -14,8 +15,8 @@ export class RegisterDto {
     example: 'user@example.com',
     type: String,
   })
-  @IsEmail()
-  @IsNotEmpty()
+  @IsEmail({}, { message: i18nValidationMessage('validation.IS_EMAIL') })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.NOT_EMPTY') })
   email: string;
 
   @ApiProperty({
@@ -23,8 +24,8 @@ export class RegisterDto {
     example: 'John Doe',
     type: String,
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.NOT_EMPTY') })
   name: string;
 
   @ApiProperty({
@@ -34,12 +35,11 @@ export class RegisterDto {
     minLength: 8,
     type: String,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(8)
+  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.NOT_EMPTY') })
+  @MinLength(8, { message: i18nValidationMessage('validation.MIN_LENGTH') })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
-    message:
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+    message: i18nValidationMessage('validation.PASSWORD_COMPLEXITY'),
   })
   password: string;
 
@@ -48,7 +48,7 @@ export class RegisterDto {
     example: '+1234567890',
     type: String,
   })
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
   @IsOptional()
   phoneNumber?: string;
 }

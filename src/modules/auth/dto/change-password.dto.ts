@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class ChangePasswordDto {
   @ApiProperty({
@@ -7,7 +8,7 @@ export class ChangePasswordDto {
     example: 'OldPass123!',
     type: String,
   })
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
   currentPassword: string;
 
   @ApiProperty({
@@ -17,12 +18,15 @@ export class ChangePasswordDto {
     minLength: 8,
     type: String,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(8)
+  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.NOT_EMPTY') })
+  @MinLength(8, {
+    message: i18nValidationMessage('validation.MIN_LENGTH', {
+      constraint1: 8,
+    }),
+  })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
-    message:
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+    message: i18nValidationMessage('validation.PASSWORD_COMPLEXITY'),
   })
   newPassword: string;
 }
