@@ -103,4 +103,12 @@ export class VehiclesService {
       data: vehicle,
     };
   }
+
+  async delete(id: ObjectId): Promise<APIResponse> {
+    await this.vehicleModel.findByIdAndDelete(id);
+
+    return {
+      message: 'Vehicle deleted successfully',
+    };
+  }
 }

@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -131,5 +134,25 @@ export class VehiclesController {
     @Param() dto: IdDto
   ) {
     return await this.vehiclesService.update(dto.id, updateVehicleDto);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete vehicle by ID',
+    description:
+      'Delete a specific vehicle by its ID. **Requires authentication and ADMIN role.**',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Vehicle ID',
+    example: '507f1f77bcf86cd799439011',
+  })
+  async delete(@Param() dto: IdDto) {
+    return await this.vehiclesService.delete(dto.id);
   }
 }
