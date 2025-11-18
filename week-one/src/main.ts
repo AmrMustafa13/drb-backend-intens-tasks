@@ -9,14 +9,14 @@ async function bootstrap() {
 		new ValidationPipe({
 			whitelist: true,
 			forbidNonWhitelisted: true,
-      transform: true
+			transform: true,
 		}),
 	);
 	const config = new DocumentBuilder()
 		.setTitle('DRB Task-One')
 		.setDescription('Week one task documentation')
 		.setVersion('1.0')
-		.addBearerAuth() 
+		.addBearerAuth()
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config);
