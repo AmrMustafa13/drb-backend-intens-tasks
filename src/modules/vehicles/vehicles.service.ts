@@ -6,9 +6,11 @@ import {
 import { CreateVehicleDto } from './dto/create-vehicles.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Vehicle, VehicleDocument } from './schemas/vehicle.schema';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { User, UserDocument } from '../users/schemas/user.schema';
-import { APIResponse } from 'src/common/types/api.types';
+import { APIResponse, QueryString } from 'src/common/types/api.types';
+import ApiFeatures from 'src/common/utils/ApiFeatures';
+import { VehicleStatus } from './vehicles.enums';
 
 @Injectable()
 export class VehiclesService {
@@ -35,6 +37,31 @@ export class VehiclesService {
     return {
       message: 'Vehicle created successfully',
       data: vehicle,
+    };
+  }
+
+  async find(q: QueryString): Promise<APIResponse> {
+    const { status, ...qs } = q;
+
+    let queryFilter: FilterQuery<VehicleDocument> = {};
+    if (status === VehicleStatus.ASSIGNED)
+      queryFilter = { driverId: { $ne: null } };
+    else if (status === VehicleStatus.UNASSIGNED)
+      queryFilter = { driverId: null };
+
+    const vehicles = await new ApiFeatures<VehicleDocument>(
+      this.vehicleModel.find(queryFilter),
+      qs
+    )
+      .sort()
+      .limitFields()
+      .paginate()
+      .filter()
+      .exec();
+
+    return {
+      size: vehicles.length,
+      data: vehicles,
     };
   }
 }

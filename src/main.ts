@@ -43,6 +43,8 @@ async function bootstrap() {
     jsonDocumentUrl: 'docs/json',
   });
 
+  // Need extended parsing!
+  app.set('query parser', 'extended');
   await app.listen(process.env.PORT ?? 3000);
 }
 

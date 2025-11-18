@@ -5,3 +5,8 @@ export enum VehicleType {
   VAN = 'van',
   MOTORCYCLE = 'motorcycle',
 }
+
+export enum VehicleStatus {
+  ASSIGNED = 'assigned',
+  UNASSIGNED = 'unassigned',
+}
