@@ -17,6 +17,7 @@ const app_config_1 = __importDefault(require("./config/app.config"));
 const mongoose_1 = require("@nestjs/mongoose");
 const users_module_1 = require("./modules/users/users.module");
 const auth_module_1 = require("./modules/auth/auth.module");
+const vehicles_module_1 = require("./modules/vehicles/vehicles.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             users_module_1.UsersModule,
             auth_module_1.AuthModule,
+            vehicles_module_1.VehiclesModule,
         ],
         controllers: [],
         providers: [],
