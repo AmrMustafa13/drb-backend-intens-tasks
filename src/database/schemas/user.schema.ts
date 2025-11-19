@@ -8,8 +8,9 @@ type UserMethods = {
 export type UserDocument = HydratedDocument<User, UserMethods>;
 
 export enum UserRole {
-  CUSTOMER = 'customer',
-  DRIVER = 'driver',
+  FLEET_MANAGER = 'fleetManager',
+  ADMIN = 'admin',
+  USER = 'user',
 }
 
 @Schema({ timestamps: true })
@@ -26,7 +27,7 @@ export class User {
   @Prop()
   phone?: string;
 
-  @Prop({ type: String, enum: UserRole, default: UserRole.CUSTOMER })
+  @Prop({ type: String, enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
   @Prop()
