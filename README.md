@@ -1,18 +1,57 @@
-# DRB Backend Internship Tasks
+# DRB Backend Tasks
 
-Welcome to the DRB Backend Internship program! This repository contains weekly tasks designed to enhance your backend development skills.
+## Features
 
-## How to Get Started
+- User registration and login
+- JWT-based authentication (Access & Refresh tokens)
+- User profile management
+- Password change functionality
+- Secure cookie-based refresh token storage
+- MongoDB database integration
+- Swagger API documentation
 
-1. **Fork this repository** to your GitHub account
-2. **Clone your forked repository** to your local machine
-3. **Create a branch** named `week-X` (where X is the week number)
-4. **Complete the task** on your branch
-5. **Push your changes** to your forked repository
-6. **Create a Pull Request** back to the main repository when ready for review
+## Installation
 
-## Questions?
+1. **Clone the repository**
 
-If you have any questions or need clarification, please reach out to me on WhatsApp.
+   ```bash
+   git clone <repository-url>
+   cd drb-backend-tasks
+   ```
 
-Good luck! 🚀
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+
+   Write environment variables based on `.env.example` file
+
+4. **Start MongoDB**
+
+   Make sure MongoDB is running on your machine:
+
+   ```bash
+   # If using MongoDB Community Edition
+   mongod
+   ```
+
+## Running the Application
+
+### Development/Watch Mode
+
+```bash
+npm run start:dev
+```
+
+The application will be available at `http://localhost:3000`
+
+## API Documentation
+
+Once the application is running, you can access the Swagger documentation at:
+
+```
+http://localhost:3000/docs
+```
