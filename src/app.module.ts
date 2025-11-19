@@ -4,6 +4,7 @@ import { configuration } from './config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './modules/auth/auth.module';
 import { TokenModule } from './modules/token/token.module';
+import { VehicleModule } from './modules/vehicle/vehicle.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TokenModule } from './modules/token/token.module';
     }),
     AuthModule,
     TokenModule,
+    VehicleModule,
   ],
   controllers: [],
   providers: [],

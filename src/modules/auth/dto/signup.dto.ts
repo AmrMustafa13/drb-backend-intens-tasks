@@ -62,9 +62,9 @@ export class SignupDto {
   @ApiPropertyOptional({
     description: "The user's role",
     enum: UserRole,
-    default: UserRole.CUSTOMER,
+    default: UserRole.USER,
   })
   @IsOptional()
   @IsEnum(UserRole, { message: 'Role must be either customer or driver' })
-  role?: UserRole = UserRole.CUSTOMER;
+  role?: UserRole = UserRole.USER;
 }
