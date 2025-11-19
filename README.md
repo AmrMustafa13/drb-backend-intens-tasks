@@ -1,6 +1,6 @@
-# DRB Backend Internship Tasks - Week 1
+# DRB Backend Internship Tasks
 
-A NestJS-based authentication API using NestJS, TypeScript, and MongoDB with JWT-based authentication.
+A NestJS-based API using NestJS, TypeScript, and MongoDB with JWT-based authentication.
 
 ## Setup Instructions
 
