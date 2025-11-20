@@ -8,7 +8,7 @@ import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Vehicle, VehicleDocument } from './schemas/vehicle.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../users/schemas/user.schema';
 import { I18nService } from 'nestjs-i18n';
 import { GetVehiclesQueryDto } from './dto/get-vehicles.query.dto';
@@ -161,5 +161,29 @@ export class VehiclesService {
     return {
       message: this.i18n.t('vehicle.deleted_success'),
     };
+  }
+
+  async assignDriver(vehicleId: string, driverId: string) {
+    // get the vehicle
+    const vehicle = await this.vehicleModel.findById(vehicleId);
+    if (!vehicle) {
+      throw new NotFoundException(this.i18n.t('vehicle.not_found'));
+    }
+
+    // check driver exists
+    const driver = await this.userModel.findById(driverId);
+    if (!driver) {
+      throw new NotFoundException(this.i18n.t('driver.not_found'));
+    }
+
+    // check driver is available
+    const exists = await this.vehicleModel.findOne({ driverId: new Types.ObjectId(driverId) });
+    if (exists) {
+      throw new BadRequestException(this.i18n.t('driver.already_assigned'));
+    }
+
+    vehicle.driverId = new Types.ObjectId(driverId);
+    const updated = await vehicle.save();
+    return updated.populate('driverId', '-password -email -refreshToken -__v');
   }
 }
