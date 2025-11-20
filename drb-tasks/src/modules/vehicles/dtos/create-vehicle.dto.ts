@@ -5,33 +5,47 @@ import {
   IsIn,
   IsMongoId,
 } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
+import { VehicleType } from '../enums/vehicle-type.enum';
 
 export class CreateVehicleDto {
-  @IsString()
-  plateNumber: string; // unique validation handled in Mongoose schema
+  @IsString({
+    message: i18nValidationMessage('validation.PLATE_STRING'),
+  })
+  plateNumber: string;
 
-  @IsString()
+  @IsString({
+    message: i18nValidationMessage('validation.MODEL_STRING'),
+  })
   model: string;
 
-  @IsString()
+  @IsString({
+    message: i18nValidationMessage('validation.MANUFACTURER_STRING'),
+  })
   manufacturer: string;
 
-  @IsNumber()
+  @IsNumber({}, { message: i18nValidationMessage('validation.YEAR_NUMBER') })
   year: number;
 
   @IsString()
-  @IsIn(['car', 'van', 'bus', 'truck'])
+  @IsIn(Object.values(VehicleType), {
+    message: i18nValidationMessage('validation.TYPE_INVALID'),
+  })
   type: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.SIM_STRING') })
   simNumber?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({
+    message: i18nValidationMessage('validation.DEVICE_STRING'),
+  })
   deviceId?: string;
 
   @IsOptional()
-  @IsMongoId({ message: 'driverId must be a valid MongoDB ObjectId' })
+  @IsMongoId({
+    message: i18nValidationMessage('validation.DRIVER_ID_INVALID'),
+  })
   driverId?: string;
 }

@@ -1,0 +1,23 @@
+{
+  "NAME_REQUIRED": "Name is required",
+  "NAME_STRING": "Name must be text",
+  "PHONE_INVALID": "Phone number is invalid (Must be Egyptian)",
+  "ROLE_STRING": "Role must be text",
+  "PLATE_STRING": "Plate number must be text",
+  "MODEL_STRING": "Model must be text",
+  "MANUFACTURER_STRING": "Manufacturer must be text",
+  "YEAR_NUMBER": "Year must be a number",
+  "TYPE_INVALID": "Vehicle type is invalid",
+  "SIM_STRING": "SIM number must be text",
+  "DEVICE_STRING": "Device ID must be text",
+  "DRIVER_ID_INVALID": "Invalid Driver ID",
+  "IS_MONGO_ID": "Invalid ID format",
+  "IS_NUMBER_STRING": "Must be a numeric string",
+  "IS_IN": "Value must be one of: {constraint1}",
+  "IS_NUMBER": "Must be a number",
+  "EMAIL_INVALID": "Please enter a valid email address",
+  "PASSWORD_REQUIRED": "Password is required",
+  "PASSWORD_MIN": "Password must be at least 8 characters",
+  "CURRENT_PASS_REQUIRED": "Current password is required",
+  "NEW_PASS_REQUIRED": "New password is required"
+}

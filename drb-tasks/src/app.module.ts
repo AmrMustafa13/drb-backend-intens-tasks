@@ -6,10 +6,29 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { VehiclesModule } from './modules/vehicles/vehicles.module';
+import {
+  AcceptLanguageResolver,
+  HeaderResolver,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
+import path from 'path';
 // import validationSchema from './config/validation.schema';
 
 @Module({
   imports: [
+    I18nModule.forRoot({
+      fallbackLanguage: 'ar',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] }, //?lang=
+        AcceptLanguageResolver, // accept-lang:
+        new HeaderResolver(['x-lang']), // x-lang:
+      ],
+    }),
     // builder.service.addSomething
     ConfigModule.forRoot({
       isGlobal: true,

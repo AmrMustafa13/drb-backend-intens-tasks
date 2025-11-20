@@ -12,6 +12,7 @@ const logging_interceptor_1 = require("./common/interceptors/logging.interceptor
 const transform_interceptor_1 = require("./common/interceptors/transform.interceptor");
 const swagger_1 = require("@nestjs/swagger");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const nestjs_i18n_1 = require("nestjs-i18n");
 async function bootstrap() {
     const logger = new common_1.Logger('Bootstrap');
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
@@ -41,10 +42,10 @@ async function bootstrap() {
         allowedHeaders: 'Authorization,Content-Type',
     });
     app.use((0, cookie_parser_1.default)());
-    app.useGlobalPipes(new common_1.ValidationPipe({
+    app.useGlobalPipes(new nestjs_i18n_1.I18nValidationPipe({
+        transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
-        transform: true,
     }));
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
     app.useGlobalFilters(new all_exceptions_filter_1.AllExceptionsFilter());

@@ -34,6 +34,7 @@
     "cookie-parser": "^1.4.7",
     "joi": "^18.0.1",
     "mongoose": "^8.19.3",
+    "nestjs-i18n": "^10.5.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",

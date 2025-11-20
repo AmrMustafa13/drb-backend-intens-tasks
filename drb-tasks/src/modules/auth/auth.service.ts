@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '../users/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,18 +16,27 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
+    private readonly i18n: I18nService,
   ) {}
+
+  private get lang(): string {
+    return I18nContext.current()?.lang || 'en'; // default english
+  }
 
   async login(loginDto: LoginDto) {
     const user = await this.userService.findByEmail(loginDto.email);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        this.i18n.t('auth.INVALID_CREDENTIALS', { lang: this.lang }),
+      );
     }
 
     const isPasswordValid = await compare(loginDto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        this.i18n.t('auth.INVALID_CREDENTIALS', { lang: this.lang }),
+      );
     }
 
     const payload = { email: user.email, sub: user._id, role: user.role };
@@ -51,11 +61,15 @@ export class AuthService {
   async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.userService.findOne(userId);
     if (!user || !user.refreshToken) {
-      throw new UnauthorizedException('Access denied');
+      throw new UnauthorizedException(
+        this.i18n.t('ACCESS_DENIED', { lang: this.lang }),
+      );
     }
     const isValid = await compare(refreshToken, user.refreshToken);
     if (!isValid) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException(
+        this.i18n.t('INVALID_REFRESH', { lang: this.lang }),
+      );
     }
 
     const payload = { email: user.email, sub: user._id, role: user.role };
@@ -68,7 +82,7 @@ export class AuthService {
 
   async logout(userId: string) {
     await this.userModel.updateOne({ _id: userId }, { refreshToken: null });
-    return { message: 'Logged out successfully' };
+    return { message: this.i18n.t('LOGOUT_SUCCESS', { lang: this.lang }) };
   }
 
   private async getTokens(payload: any) {

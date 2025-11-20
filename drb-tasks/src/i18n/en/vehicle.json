@@ -1,0 +1,11 @@
+{
+  "NOT_EMPTY": "{property} should not be empty",
+  "IS_STRING": "{property} must be a string",
+  "IS_EMAIL": "{property} must be a valid email address",
+  "MIN_LENGTH": "{property} must be at least {constraint1} characters",
+  "IS_PHONE": "{property} must be a valid phone number",
+  "IS_MONGO_ID": "{property} must be a valid ID",
+  "IS_NUMBER": "{property} must be a number",
+  "IS_IN": "{property} must be one of the following values: {constraint1}",
+  "IS_NUMBER_STRING": "{property} must be a numeric string"
+}

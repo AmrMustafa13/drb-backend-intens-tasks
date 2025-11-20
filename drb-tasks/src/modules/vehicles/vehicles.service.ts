@@ -12,19 +12,28 @@ import { UpdateVehicleDto } from './dtos/update-vehicle';
 import { AssignDriverDto } from './dtos/assign-driver.dto';
 import { VehiclesQueryDto } from './dtos/vehicle-query.dto';
 import { PaginatedResult } from './interfaces/paginated-response.interface';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class VehiclesService {
   constructor(
     @InjectModel(Vehicle.name) private vehicleModel: Model<Vehicle>,
     private userService: UsersService,
+    private readonly i18n: I18nService,
   ) {}
+
+  private get lang(): string {
+    return I18nContext.current()?.lang || 'en';
+  }
 
   async createVehicle(createVehicleDto: CreateVehicleDto) {
     // check if driver exists
     if (createVehicleDto.driverId) {
       const driver = await this.userService.findOne(createVehicleDto.driverId);
-      if (!driver) throw new NotFoundException('Driver not found');
+      if (!driver)
+        throw new NotFoundException(
+          this.i18n.t('vehicle.DRIVER_NOT_FOUND', { lang: this.lang }),
+        );
     }
     // create vehicle
     const vehicle = this.vehicleModel.create(createVehicleDto);
@@ -91,14 +100,20 @@ export class VehiclesService {
       .findById(vehicleId)
       .populate('driverId')
       .exec();
-    if (!vehicle) throw new NotFoundException('Vehicle not found');
+    if (!vehicle)
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
     return vehicle;
   }
 
   async updateVehicle(id: string, dto: UpdateVehicleDto) {
     if (dto.driverId) {
       const driverExists = await this.userService.findOne(dto.driverId);
-      if (!driverExists) throw new NotFoundException('Driver not found');
+      if (!driverExists)
+        throw new NotFoundException(
+          this.i18n.t('vehicle.DRIVER_NOT_FOUND', { lang: this.lang }),
+        );
     }
 
     const updatedVehicle = await this.vehicleModel
@@ -108,7 +123,9 @@ export class VehiclesService {
       .exec();
 
     if (!updatedVehicle) {
-      throw new NotFoundException('Vehicle not found');
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
     }
     return updatedVehicle;
   }
@@ -116,10 +133,12 @@ export class VehiclesService {
   async deleteVehicle(vehicleId: string) {
     const deleted = await this.vehicleModel.findByIdAndDelete(vehicleId);
     if (!deleted) {
-      throw new NotFoundException('Vehicle not found');
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
     }
     return {
-      message: 'Vehicle deleted successfully',
+      message: this.i18n.t('vehicle.VEHICLE_DELETED', { lang: this.lang }),
       deleted,
     };
   }
@@ -127,7 +146,9 @@ export class VehiclesService {
   async assignDriver(vehicleId: string, assignDriver: AssignDriverDto) {
     const vehicle = await this.vehicleModel.findById(vehicleId);
     if (!vehicle) {
-      throw new NotFoundException('Vehicle not found');
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
     }
     const driverAssigned = await this.vehicleModel.findOne({
       driverId: assignDriver.driverId,
@@ -136,7 +157,7 @@ export class VehiclesService {
 
     if (driverAssigned)
       throw new BadRequestException(
-        'Driver already assigned to another vehicle',
+        this.i18n.t('vehicle.DRIVER_ALREADY_ASSIGNED', { lang: this.lang }),
       );
 
     const updatedVehicle = await this.vehicleModel
@@ -153,18 +174,25 @@ export class VehiclesService {
     Therefore, the extra if (!updatedVehicle) check is not necessary 99% of the time, 
     but it is safe to include if you want to guard against any unexpected edge cases.
      */
-    if (!updatedVehicle) throw new NotFoundException('Vehicle not found');
+    if (!updatedVehicle)
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
 
     return updatedVehicle;
   }
 
   async unAssignDriver(vehicleId: string) {
     if (!isValidObjectId(vehicleId)) {
-      throw new BadRequestException('Invalid vehicleId');
+      throw new BadRequestException(
+        this.i18n.t('vehicle.INVALID_VEHICLE_ID', { lang: this.lang }),
+      );
     }
     const vehicle = await this.vehicleModel.findById(vehicleId);
     if (!vehicle) {
-      throw new NotFoundException('Vehicle not found');
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
     }
 
     //  unassign driver to vehicle by update driverId of vehicle
@@ -172,7 +200,10 @@ export class VehiclesService {
       .findByIdAndUpdate(vehicleId, { driverId: null }, { new: true })
       .populate('driverId');
 
-    if (!updatedVehicle) throw new NotFoundException('Vehicle not found');
+    if (!updatedVehicle)
+      throw new NotFoundException(
+        this.i18n.t('vehicle.VEHICLE_NOT_FOUND', { lang: this.lang }),
+      );
 
     return updatedVehicle;
   }

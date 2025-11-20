@@ -11,9 +11,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserProfileDto } from '../auth/dto/updateUserProfile.dto';
 import { ChangePasswordDto } from '../auth/dto/changePassword.dto';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly i18n: I18nService,
+  ) {}
+
+  private get lang(): string {
+    return I18nContext.current()?.lang || 'en'; // default english
+  }
 
   async create(createUserDto: CreateUserDto) {
     const existingUser = await this.userModel.findOne({
@@ -21,7 +29,9 @@ export class UsersService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException(
+        this.i18n.t('user.EMAIL_EXISTS', { lang: this.lang }),
+      );
     }
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -44,7 +54,9 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.userModel.findById(id).select('-password').exec();
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(
+        this.i18n.t('user.USER_NOT_FOUND', { lang: this.lang }),
+      );
     }
     return user;
   }
@@ -71,10 +83,10 @@ export class UsersService {
       .findByIdAndUpdate(userId, updateUserProfileDto, { new: true })
       .exec();
 
-    console.log('from user service');
-    console.log('updatedUser', updatedUser);
     if (!updatedUser) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(
+        this.i18n.t('user.USER_NOT_FOUND', { lang: this.lang }),
+      );
     }
 
     return updatedUser;
@@ -82,18 +94,25 @@ export class UsersService {
 
   async changePassword(userId: string, changePassword: ChangePasswordDto) {
     const user = await this.userModel.findById(userId).exec();
-    if (!user) throw new NotFoundException('User not found');
+    if (!user)
+      throw new NotFoundException(
+        this.i18n.t('user.USER_NOT_FOUND', { lang: this.lang }),
+      );
     const isMatch = await bcrypt.compare(
       changePassword.currentPassword,
       user.password,
     );
     if (!isMatch)
-      throw new BadRequestException('Current Password is incorrect');
+      throw new BadRequestException(
+        this.i18n.t('user.CURRENT_PASSWORD_INCORRECT', { lang: this.lang }),
+      );
 
     const hashed = await bcrypt.hash(changePassword.newPassword, 10);
     user.password = hashed;
     await user.save();
 
-    return 'Password changed successfully';
+    return {
+      message: this.i18n.t('user.PASSWORD_CHANGED', { lang: this.lang }),
+    };
   }
 }

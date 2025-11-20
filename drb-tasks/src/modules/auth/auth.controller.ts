@@ -16,8 +16,10 @@ import { UsersService } from '../users/users.service';
 import { UpdateUserProfileDto } from './dto/updateUserProfile.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh-gaurd';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiBearerAuth() // to send token from Swagger UI
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

@@ -1,0 +1,6 @@
+{
+  "EMAIL_EXISTS": "Email already exists",
+  "USER_NOT_FOUND": "User not found",
+  "CURRENT_PASSWORD_INCORRECT": "Current password is incorrect",
+  "PASSWORD_CHANGED": "Password changed successfully"
+}

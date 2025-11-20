@@ -18,12 +18,26 @@ const mongoose_1 = require("@nestjs/mongoose");
 const users_module_1 = require("./modules/users/users.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const vehicles_module_1 = require("./modules/vehicles/vehicles.module");
+const nestjs_i18n_1 = require("nestjs-i18n");
+const path_1 = __importDefault(require("path"));
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            nestjs_i18n_1.I18nModule.forRoot({
+                fallbackLanguage: 'ar',
+                loaderOptions: {
+                    path: path_1.default.join(__dirname, '/i18n/'),
+                    watch: true,
+                },
+                resolvers: [
+                    { use: nestjs_i18n_1.QueryResolver, options: ['lang'] },
+                    nestjs_i18n_1.AcceptLanguageResolver,
+                    new nestjs_i18n_1.HeaderResolver(['x-lang']),
+                ],
+            }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 load: [app_config_1.default, db_config_1.default],
