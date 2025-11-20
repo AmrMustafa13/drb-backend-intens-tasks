@@ -41,7 +41,8 @@ export class VehiclesController {
     return this.vehiclesService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'fleet_manager')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
     return this.vehiclesService.update(id, updateVehicleDto);
@@ -54,7 +55,8 @@ export class VehiclesController {
     return this.vehiclesService.remove(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'fleet_manager')
   @Patch(':id/assign-driver')
   assignDriver(
     @Param('id') vehicleId: string,
@@ -63,7 +65,8 @@ export class VehiclesController {
     return this.vehiclesService.assignDriver(vehicleId, assignDriverDto.driverId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'fleet_manager')
   @Patch(':id/unassign-driver')
   unassignDriver(
     @Param('id') vehicleId: string,

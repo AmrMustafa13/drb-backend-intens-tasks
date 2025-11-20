@@ -22,8 +22,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('DRB Auth API')
-    .setDescription('Authentication system for DRB Internship')
+    .setTitle('Fleet & Vehicle Management Module')
+    .setDescription('Fleet & Vehicle Management System for DRB Intership')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
