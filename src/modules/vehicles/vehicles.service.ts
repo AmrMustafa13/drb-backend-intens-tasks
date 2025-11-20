@@ -105,15 +105,48 @@ export class VehiclesService {
   }
 
   async findOne(id: string) {
-    const driver = await this.vehicleModel.findById(id).populate('driverId').exec();
-    if (!driver) {
+    const vehicle = await this.vehicleModel
+      .findById(id)
+      .populate('driverId', '-password -__v -refreshToken')
+      .exec();
+    if (!vehicle) {
       throw new NotFoundException(this.i18n.t('vehicle.not_found'));
     }
-    return driver.toObject();
+    return vehicle.toObject();
   }
 
-  update(id: number, updateVehicleDto: UpdateVehicleDto) {
-    return `This action updates a #${id} vehicle`;
+  async update(id: string, updateVehicleDto: UpdateVehicleDto) {
+    const vehicle = await this.vehicleModel.findById(id);
+    if (!vehicle) {
+      throw new NotFoundException(this.i18n.t('vehicle.not_found'));
+    }
+
+    // if driverId provided verify driver exists
+    if (updateVehicleDto.driverId) {
+      const driver = await this.userModel.findById(updateVehicleDto.driverId);
+      if (!driver) {
+        throw new NotFoundException(this.i18n.t('driver.not_found'));
+      }
+
+      // check availability of the driver
+      const exists = await this.vehicleModel.findOne({
+        driverId: updateVehicleDto.driverId,
+        _id: { $ne: vehicle._id },
+      });
+      if (exists) {
+        throw new BadRequestException(this.i18n.t('driver.already_assigned'));
+      }
+    }
+
+    const updated = await this.vehicleModel
+      .findByIdAndUpdate(
+        id,
+        { $set: updateVehicleDto },
+        { new: true, runValidators: false },
+      )
+      .populate('driverId', '-password -__v -refreshToken');
+
+    return updated;
   }
 
   remove(id: number) {

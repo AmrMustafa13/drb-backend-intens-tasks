@@ -42,9 +42,11 @@ export class VehiclesController {
     return this.vehiclesService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'fleet_manager')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
-    return this.vehiclesService.update(+id, updateVehicleDto);
+    return this.vehiclesService.update(id, updateVehicleDto);
   }
 
   @Delete(':id')
