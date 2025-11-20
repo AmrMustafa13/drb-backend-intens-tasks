@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -13,7 +14,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { Roles } from 'src/common/decorators/roles.decorator';
 
-@Controller('vehicle')
+@Controller('vehicles')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
@@ -23,5 +24,12 @@ export class VehicleController {
   @Post('')
   create(@Body() createVehicleDto: CreateVehicleDto) {
     return this.vehicleService.create(createVehicleDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Get('')
+  findAll() {
+    return this.vehicleService.findAll();
   }
 }

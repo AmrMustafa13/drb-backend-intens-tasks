@@ -50,4 +50,14 @@ export class VehicleService {
     }
     throw new InternalServerErrorException('Failed to create vehicle');
   }
+
+  async findAll() {
+    const vehicles = await this.vehicleModel.find();
+
+    const res: APIResponse = {
+      size: vehicles.length,
+      data: vehicles,
+    };
+    return res;
+  }
 }
