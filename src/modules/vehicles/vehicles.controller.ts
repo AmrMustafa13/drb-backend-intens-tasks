@@ -27,7 +27,7 @@ export class VehiclesController {
   create(@Body() createVehicleDto: CreateVehicleDto) {
     return this.vehiclesService.create(createVehicleDto);
   }
-  
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'fleet_manager')
   @Get()
@@ -35,9 +35,11 @@ export class VehiclesController {
     return this.vehiclesService.findAll(query);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'fleet_manager')
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.vehiclesService.findOne(+id);
+    return this.vehiclesService.findOne(id);
   }
 
   @Patch(':id')

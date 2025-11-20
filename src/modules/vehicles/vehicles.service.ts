@@ -104,8 +104,12 @@ export class VehiclesService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} vehicle`;
+  async findOne(id: string) {
+    const driver = await this.vehicleModel.findById(id).populate('driverId').exec();
+    if (!driver) {
+      throw new NotFoundException(this.i18n.t('vehicle.not_found'));
+    }
+    return driver.toObject();
   }
 
   update(id: number, updateVehicleDto: UpdateVehicleDto) {

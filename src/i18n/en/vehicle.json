@@ -1,3 +1,4 @@
 {
-    "plateNoExist": "Plate number already exists!"
+    "plateNoExist": "Plate number already exists!",
+    "not_found": "Vehicle not found!"
 }
