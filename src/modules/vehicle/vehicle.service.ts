@@ -22,35 +22,38 @@ export class VehicleService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
   async create(createVehicleDto: CreateVehicleDto) {
-    if (createVehicleDto.driverId) {
-      const driver = await this.userModel.findById(createVehicleDto.driverId);
+    try {
+      if (createVehicleDto.driverId) {
+        const driver = await this.userModel.findById(createVehicleDto.driverId);
 
-      if (!driver) {
-        throw new NotFoundException(`No driver found with this id`);
+        if (!driver) {
+          throw new NotFoundException(`No driver found with this id`);
+        }
+
+        if (driver.role !== UserRole.DRIVER) {
+          throw new BadRequestException(
+            `User with provided id is not a driver`,
+          );
+        }
       }
 
-      if (driver.role !== UserRole.DRIVER) {
-        throw new BadRequestException(`User with provided id is not a driver`);
+      const vehicle = await this.vehicleModel.create(createVehicleDto);
+
+      const res: APIResponse = {
+        message: 'vehicle created successfully',
+        data: vehicle,
+      };
+      return res;
+    } catch (error) {
+      if (error.code === 11000) {
+        const field = Object.keys(error.keyValue || {})[0];
+        const value = error.keyValue?.[field];
+        throw new ConflictException(
+          `Vehicle with ${field} '${value}' already exists`,
+        );
       }
+      throw new InternalServerErrorException('Failed to create vehicle');
     }
-
-    const vehicle = await this.vehicleModel.create(createVehicleDto);
-
-    const res: APIResponse = {
-      message: 'vehicle created successfully',
-      data: vehicle,
-    };
-    return res;
-  }
-  catch(error) {
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyValue || {})[0];
-      const value = error.keyValue?.[field];
-      throw new ConflictException(
-        `Vehicle with ${field} '${value}' already exists`,
-      );
-    }
-    throw new InternalServerErrorException('Failed to create vehicle');
   }
 
   async findAll() {
@@ -77,12 +80,24 @@ export class VehicleService {
     const updatedVehicle = await this.vehicleModel.findByIdAndUpdate(
       id,
       updateVehicleDto,
+      { new: true },
     );
     if (!updatedVehicle)
       throw new NotFoundException('No vehicle found with this is');
 
     const res: APIResponse = {
       data: updatedVehicle,
+    };
+    return res;
+  }
+
+  async deleteOne(id: string) {
+    const deletedVehicle = await this.vehicleModel.findByIdAndDelete(id);
+    if (!deletedVehicle)
+      throw new NotFoundException('No vehicle found with this id');
+
+    const res: APIResponse = {
+      message: 'Vehicle deleted successfully',
     };
     return res;
   }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -54,5 +55,14 @@ export class VehicleController {
   ) {
     const { id } = params;
     return this.vehicleService.updateOne(id, updateVehicleDto);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @Delete(':id')
+  deleteOne(@Param() params: IdDto) {
+    const { id } = params;
+    return this.vehicleService.deleteOne(id);
   }
 }

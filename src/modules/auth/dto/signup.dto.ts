@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNotIn,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -65,6 +66,11 @@ export class SignupDto {
     default: UserRole.USER,
   })
   @IsOptional()
-  @IsEnum(UserRole, { message: 'Role must be either customer or driver' })
+  @IsEnum(UserRole, {
+    message: 'Role must be either customer, driver, or fleet manager',
+  })
+  @IsNotIn([UserRole.ADMIN], {
+    message: 'Cannot register as admin.',
+  })
   role?: UserRole = UserRole.USER;
 }
