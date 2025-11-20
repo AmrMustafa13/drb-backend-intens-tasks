@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { IdDto } from 'src/common/dtos/id.dto';
+import { updateVehicleDto } from './dto/update-vehicle.dto';
 
 @Controller('vehicles')
 export class VehicleController {
@@ -41,5 +43,16 @@ export class VehicleController {
   findOne(@Param() params: IdDto) {
     const { id } = params;
     return this.vehicleService.findOne(id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Patch(':id')
+  updateOne(
+    @Param() params: IdDto,
+    @Body() updateVehicleDto: updateVehicleDto,
+  ) {
+    const { id } = params;
+    return this.vehicleService.updateOne(id, updateVehicleDto);
   }
 }

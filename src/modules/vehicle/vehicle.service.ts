@@ -13,6 +13,7 @@ import { APIResponse } from 'src/common/types/api.type';
 import { User, UserDocument } from 'src/database/schemas/user.schema';
 import { UserRole } from 'src/common/enums/user.enum';
 import { IdDto } from 'src/common/dtos/id.dto';
+import { updateVehicleDto } from './dto/update-vehicle.dto';
 
 @Injectable()
 export class VehicleService {
@@ -68,6 +69,20 @@ export class VehicleService {
 
     const res: APIResponse = {
       data: vehicle,
+    };
+    return res;
+  }
+
+  async updateOne(id: string, updateVehicleDto: updateVehicleDto) {
+    const updatedVehicle = await this.vehicleModel.findByIdAndUpdate(
+      id,
+      updateVehicleDto,
+    );
+    if (!updatedVehicle)
+      throw new NotFoundException('No vehicle found with this is');
+
+    const res: APIResponse = {
+      data: updatedVehicle,
     };
     return res;
   }
