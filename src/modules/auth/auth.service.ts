@@ -202,8 +202,7 @@ export class AuthService {
 
     const user = await this.userModel
       .findById(verifiedToken.id)
-      .select('_id email name')
-      .lean();
+      .select('_id email name');
 
     if (!user) {
       throw new UnauthorizedException('Invalid refresh token');

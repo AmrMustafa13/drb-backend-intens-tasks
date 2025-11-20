@@ -1,5 +1,8 @@
-import { Prop, Schema } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { VehicleType } from 'src/common/enums/vehicle.enum';
+
+export type VehicleDocument = HydratedDocument<Vehicle>;
 
 @Schema({ timestamps: true })
 export class Vehicle {
@@ -15,8 +18,8 @@ export class Vehicle {
   @Prop({ required: true })
   year: number;
 
-  @Prop({ required: true })
-  type: string;
+  @Prop({ required: true, type: String, enum: VehicleType })
+  type: VehicleType;
 
   @Prop()
   simNumber: string;
@@ -30,3 +33,5 @@ export class Vehicle {
   })
   driverId: mongoose.Types.ObjectId;
 }
+
+export const VehicleSchema = SchemaFactory.createForClass(Vehicle);

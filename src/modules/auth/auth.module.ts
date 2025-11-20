@@ -11,6 +11,7 @@ import { TokenModule } from '../token/token.module';
     TokenModule,
   ],
   providers: [AuthService],
+  exports: [MongooseModule],
   controllers: [AuthController],
 })
 export class AuthModule {}

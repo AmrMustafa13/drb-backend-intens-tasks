@@ -10,7 +10,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { UserRole } from '../../../database/schemas/user.schema';
+import { UserRole } from 'src/common/enums/user.enum';
 
 export class SignupDto {
   @ApiProperty({
