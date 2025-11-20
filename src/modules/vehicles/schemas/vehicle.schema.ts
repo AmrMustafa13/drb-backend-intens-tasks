@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, type ObjectId } from 'mongoose';
 import { Type } from '../enums/Type.enum';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Vehicle {
   @Prop({ required: true, unique: true, type: String })
   plateNumber: string;

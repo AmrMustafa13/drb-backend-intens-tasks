@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { VehiclesService } from './vehicles.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
@@ -14,6 +15,7 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { GetVehiclesQueryDto } from './dto/get-vehicles.query.dto';
 
 @Controller('vehicles')
 export class VehiclesController {
@@ -25,10 +27,12 @@ export class VehiclesController {
   create(@Body() createVehicleDto: CreateVehicleDto) {
     return this.vehiclesService.create(createVehicleDto);
   }
-
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'fleet_manager')
   @Get()
-  findAll() {
-    return this.vehiclesService.findAll();
+  findAll(@Query() query: GetVehiclesQueryDto) {
+    return this.vehiclesService.findAll(query);
   }
 
   @Get(':id')
