@@ -30,8 +30,8 @@ export class Vehicle {
   @Prop({ type: String })
   deviceId?: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  driverId?: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, default: null, ref: 'User' })
+  driverId?: Types.ObjectId | null;
 }
 
 export type VehicleDocument = Vehicle & Document;

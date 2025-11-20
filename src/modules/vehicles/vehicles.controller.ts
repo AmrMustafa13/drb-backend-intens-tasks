@@ -62,4 +62,13 @@ export class VehiclesController {
   ) {
     return this.vehiclesService.assignDriver(vehicleId, assignDriverDto.driverId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/unassign-driver')
+  unassignDriver(
+    @Param('id') vehicleId: string,
+    @Body() unassignDriverDto: AssignDriverDto,
+  ) {
+    return this.vehiclesService.unassignDriver(vehicleId, unassignDriverDto.driverId);
+  }
 }

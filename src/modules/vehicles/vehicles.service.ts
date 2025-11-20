@@ -186,4 +186,21 @@ export class VehiclesService {
     const updated = await vehicle.save();
     return updated.populate('driverId', '-password -email -refreshToken -__v');
   }
+
+  async unassignDriver(vehicleId: string, driverId: string) {
+    // get the vehicle
+    const vehicle = await this.vehicleModel.findById(vehicleId);
+    if (!vehicle) {
+      throw new NotFoundException(this.i18n.t('vehicle.not_found'));
+    }
+
+    // check driver exists
+    const driver = await this.userModel.findById(driverId);
+    if (!driver) {
+      throw new NotFoundException(this.i18n.t('driver.not_found'));
+    }
+
+    vehicle.driverId = null;
+    return await vehicle.save();
+  }
 }
