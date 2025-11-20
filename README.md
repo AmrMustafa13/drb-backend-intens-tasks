@@ -2,21 +2,6 @@
 
 A comprehensive vehicle and fleet management system built with NestJS, MongoDB, and JWT authentication. This module provides complete CRUD operations for managing vehicles, driver assignments, and fleet operations with full Arabic localization support.
 
-## 📋 Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Environment Variables](#environment-variables)
-- [Running the Application](#running-the-application)
-- [API Documentation](#api-documentation)
-- [Database Schema](#database-schema)
-- [Project Structure](#project-structure)
-- [Internationalization](#internationalization)
-- [Testing](#testing)
-- [Contributing](#contributing)
-
 ## ✨ Features
 
 - **Vehicle Management**: Create, read, update, and delete vehicles
