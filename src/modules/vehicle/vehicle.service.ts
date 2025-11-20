@@ -13,10 +13,12 @@ import { APIResponse } from 'src/common/types/api.type';
 import { User, UserDocument } from 'src/database/schemas/user.schema';
 import { UserRole } from 'src/common/enums/user.enum';
 import { updateVehicleDto } from './dto/update-vehicle.dto';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class VehicleService {
   constructor(
+    private readonly i18n: I18nService,
     @InjectModel(Vehicle.name) private vehicleModel: Model<VehicleDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
@@ -26,12 +28,18 @@ export class VehicleService {
         const driver = await this.userModel.findById(createVehicleDto.driverId);
 
         if (!driver) {
-          throw new NotFoundException(`No driver found with this id`);
+          throw new NotFoundException(
+            this.i18n.t('exceptions.NO_DRIVER', {
+              lang: I18nContext.current()?.lang,
+            }),
+          );
         }
 
         if (driver.role !== UserRole.DRIVER) {
           throw new BadRequestException(
-            `User with provided id is not a driver`,
+            this.i18n.t('exceptions.NOT_A_DRIVER', {
+              lang: I18nContext.current()?.lang,
+            }),
           );
         }
       }
@@ -39,7 +47,9 @@ export class VehicleService {
       const vehicle = await this.vehicleModel.create(createVehicleDto);
 
       const res: APIResponse = {
-        message: 'vehicle created successfully',
+        message: this.i18n.t('messages.VEHICLE_CREATED', {
+          lang: I18nContext.current()?.lang,
+        }),
         data: vehicle,
       };
       return res;
@@ -51,13 +61,17 @@ export class VehicleService {
         throw error;
 
       if (error.code === 11000) {
-        const field = Object.keys(error.keyValue || {})[0];
-        const value = error.keyValue?.[field];
         throw new ConflictException(
-          `Vehicle with ${field} '${value}' already exists`,
+          this.i18n.t('exceptions.SAME_P_NO', {
+            lang: I18nContext.current()?.lang,
+          }),
         );
       }
-      throw new InternalServerErrorException('Failed to create vehicle');
+      throw new InternalServerErrorException(
+        this.i18n.t('exceptions.FAILED', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
   }
 
@@ -76,7 +90,12 @@ export class VehicleService {
       .findById(id)
       .populate('driverId', '-password -refreshToken -__v');
 
-    if (!vehicle) throw new NotFoundException('No vehicle found with this id');
+    if (!vehicle)
+      throw new NotFoundException(
+        this.i18n.t('exceptions.NO_VEHICLE', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const res: APIResponse = {
       data: vehicle,
@@ -90,7 +109,11 @@ export class VehicleService {
       .populate('driverId', '-password -refreshToken -__v');
 
     if (!updatedVehicle)
-      throw new NotFoundException('No vehicle found with this is');
+      throw new NotFoundException(
+        this.i18n.t('exceptions.NO_VEHICLE', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const res: APIResponse = {
       data: updatedVehicle,
@@ -101,10 +124,16 @@ export class VehicleService {
   async deleteOne(id: string) {
     const deletedVehicle = await this.vehicleModel.findByIdAndDelete(id);
     if (!deletedVehicle)
-      throw new NotFoundException('No vehicle found with this id');
+      throw new NotFoundException(
+        this.i18n.t('exceptions.NO_VEHICLE', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const res: APIResponse = {
-      message: 'Vehicle deleted successfully',
+      message: this.i18n.t('messages.VEHICLE_DELETED', {
+        lang: I18nContext.current()?.lang,
+      }),
     };
     return res;
   }
@@ -113,9 +142,18 @@ export class VehicleService {
     // check if user exists, and is a driver
     const driver = await this.userModel.findById(driverId);
 
-    if (!driver) throw new NotFoundException('No driver found with this id.');
+    if (!driver)
+      throw new NotFoundException(
+        this.i18n.t('exceptions.NO_DRIVER', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     if (driver.role !== UserRole.DRIVER)
-      throw new BadRequestException('User with this id is not a driver.');
+      throw new BadRequestException(
+        this.i18n.t('exceptions.NOT_A_DRIVER', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const isAssigned = await this.vehicleModel.findOne({
       driverId,
@@ -124,12 +162,16 @@ export class VehicleService {
       // assigned to same vehicle
       if (isAssigned._id.toString() === id)
         throw new BadRequestException(
-          'Driver is already assigned to this vehicle',
+          this.i18n.t('exceptions.ASSIGNED_TO_THIS', {
+            lang: I18nContext.current()?.lang,
+          }),
         );
 
       // assigned to different vehicle
       throw new BadRequestException(
-        'Driver is already assigned to another vehicle',
+        this.i18n.t('exceptions.ASSIGNED_TO_ANOTHER', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
@@ -137,10 +179,16 @@ export class VehicleService {
       .findByIdAndUpdate(id, { driverId }, { new: true })
       .populate('driverId', '-password -refreshToken -__v');
     if (!updatedVehicle)
-      throw new NotFoundException('No vehicle found with this id.');
+      throw new NotFoundException(
+        this.i18n.t('exceptions.NO_VEHICLE', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const res: APIResponse = {
-      message: 'Driver assigned to vehicle successfully',
+      message: this.i18n.t('messages.DRIVER_ASSIGNED', {
+        lang: I18nContext.current()?.lang,
+      }),
       data: updatedVehicle,
     };
     return res;
@@ -148,9 +196,18 @@ export class VehicleService {
 
   async unAssignDriver(id: string) {
     const vehicle = await this.vehicleModel.findById(id);
-    if (!vehicle) throw new NotFoundException('No vehicle found with this id.');
+    if (!vehicle)
+      throw new NotFoundException(
+        this.i18n.t('exceptions.NO_VEHICLE', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     if (!vehicle.driverId)
-      throw new BadRequestException('Vehicle does not have an assigned driver');
+      throw new BadRequestException(
+        this.i18n.t('exceptions.NO_VEHICLE', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     // driverId = null
     const updatedVehicle = await this.vehicleModel.findByIdAndUpdate(
@@ -160,7 +217,9 @@ export class VehicleService {
     );
 
     const res: APIResponse = {
-      message: 'Driver unassigned from vehicle successfully',
+      message: this.i18n.t('messages.DRIVER_UNASSIGNED', {
+        lang: I18nContext.current()?.lang,
+      }),
       data: updatedVehicle!,
     };
 

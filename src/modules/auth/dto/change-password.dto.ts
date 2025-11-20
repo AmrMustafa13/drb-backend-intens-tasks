@@ -5,6 +5,7 @@ import {
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class ChangePasswordDto {
   @ApiProperty({
@@ -12,7 +13,9 @@ export class ChangePasswordDto {
     example: 'OldPassword123!',
   })
   @IsString()
-  @IsNotEmpty({ message: 'Current Passeord is required' })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.CURRENT_PASSWORD_REQUIRED'),
+  })
   currentPassword!: string;
 
   @ApiProperty({
@@ -24,11 +27,14 @@ export class ChangePasswordDto {
   @IsStrongPassword(
     {},
     {
-      message:
-        'Password must contain uppercase, lowercase, number and special character',
+      message: i18nValidationMessage('validation.PASSWORD_STRONG'),
     },
   )
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
-  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(8, {
+    message: i18nValidationMessage('validation.PASSWORD_MIN_LENGTH'),
+  })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.PASSWORD_REQUIRED'),
+  })
   newPassword!: string;
 }

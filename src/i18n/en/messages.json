@@ -1,0 +1,12 @@
+{
+  "ACCOUNT_CREATED": "Account created successfully",
+  "LOGGED_IN": "Logged in successfully",
+  "ACCOUNT_UPDATED": "Account updated successfully",
+  "PASSWORD_CHANGED": "Password changed successfully",
+  "LOGGED_OUT": "Logged out successfully",
+
+  "VEHICLE_CREATED": "Vehicle created successfully",
+  "VEHICLE_DELETED": "Vehicle deleted successfully",
+  "DRIVER_ASSIGNED": "Driver assigned to vehicle successfully",
+  "DRIVER_UNASSIGNED": "Driver unassigned from vehicle successfully"
+}

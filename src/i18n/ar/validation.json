@@ -1,0 +1,21 @@
+{
+  "EMAIL_REQUIRED": "البريد الإلكتروني مطلوب",
+  "EMAIL_INVALID": "يرجى إدخال بريد إلكتروني صحيح",
+  "PASSWORD_REQUIRED": "كلمة المرور مطلوبة",
+  "PASSWORD_MIN_LENGTH": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+  "PASSWORD_STRONG": "كلمة المرور يجب أن تحتوي على حرف كبير وصغير ورقم ورمز خاص",
+  "NAME_REQUIRED": "الاسم مطلوب",
+  "NAME_EMPTY": "الاسم لا يمكن أن يكون فارغاً",
+  "NAME_MAX_LENGTH": "الاسم لا يمكن أن يتجاوز 50 حرفاً",
+  "PHONE_INVALID": "يرجى إدخال رقم هاتف صحيح",
+  "ROLE_INVALID": "الدور يجب أن يكون عميل أو سائق أو مدير أسطول",
+  "ROLE_ADMIN": "لا يمكن التسجيل كمسؤول",
+  "CURRENT_PASSWORD_REQUIRED": "كلمة المرور الحالية مطلوبة",
+  "ID_INVALID": "المعرف يجب أن يكون رقم MongoDB صحيح",
+  "DRIVER_ID_REQUIRED": "رقم السائق مطلوب",
+  "PLATE_NUMBER_REQUIRED": "رقم اللوحة مطلوب",
+  "MODEL_REQUIRED": "الموديل مطلوب",
+  "MANUFACTURER_REQUIRED": "الشركة المصنعة مطلوبة",
+  "YEAR_REQUIRED": "السنة مطلوبة",
+  "TYPE_REQUIRED": "النوع مطلوب"
+}

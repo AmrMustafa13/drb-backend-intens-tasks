@@ -1,0 +1,20 @@
+{
+  "NO_DRIVER": "No driver Found with this id.",
+  "NOT_A_DRIVER": "User with provided id is not a driver.",
+  "ASSIGNED_TO_THIS": "Driver is already assigned to this vehicle.",
+  "ASSIGNED_TO_ANOTHER": "Driver is already assigned to another vehicle.",
+  "NO_VEHICLE": "No vehicle Found with this id.",
+  "FAILED": "Failed to create",
+  "SAME_P_NO": "Vehicle with the same plate number already exists",
+
+  "EMAIL_EXISTS": "An account with this email already exists.",
+  "WRONG_CRED": "Wrong email or password. Please try again.",
+  "NO_USER": "User not found",
+  "DIFF_NEW_PASS": "New password must be different from current password.",
+  "INC_PASS": "Current password is incorrect.",
+  "INVALID_REFRESH": "Refresh token is invalid or expired.",
+  "INVALID_ACCESS": "Access token is invalid or expired.",
+  "AUTH_REQ": "Authentication required.",
+  "ROLE": "Access denied. You are not allowed to view ths endpoint.",
+  "REFRESH_NOT_FOUND": "Refresh token not found in cookies."
+}

@@ -1,11 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 import { AccessTokenPayload } from 'src/common/types/api.type';
 
 @Injectable()
 export class TokenService {
   constructor(
+    private readonly i18n: I18nService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -30,7 +32,11 @@ export class TokenService {
         secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
       } as JwtVerifyOptions);
     } catch {
-      throw new UnauthorizedException('Access token is invalid or expired');
+      throw new UnauthorizedException(
+        this.i18n.t('exceptions.INVALID_ACCESS', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
   };
 
@@ -40,7 +46,11 @@ export class TokenService {
         secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
       } as JwtVerifyOptions);
     } catch {
-      throw new UnauthorizedException('Refresh token is invalid or expired');
+      throw new UnauthorizedException(
+        this.i18n.t('exceptions.INVALID_REFRESH', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
   };
 }

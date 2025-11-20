@@ -12,14 +12,15 @@ import {
   MinLength,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user.enum';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class SignupDto {
   @ApiProperty({
     description: "The user's email address",
     example: 'user@example.com',
   })
-  @IsEmail({}, { message: 'Please provide a valid email address' })
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: i18nValidationMessage('validation.EMAIL_INVALID') })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.EMAIL_REQUIRED') })
   email!: string;
 
   @ApiProperty({
@@ -31,12 +32,15 @@ export class SignupDto {
   @IsStrongPassword(
     {},
     {
-      message:
-        'Password must contain uppercase, lowercase, number and special character',
+      message: i18nValidationMessage('validation.PASSWORD_STRONG'),
     },
   )
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
-  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(8, {
+    message: i18nValidationMessage('validation.PASSWORD_MIN_LENGTH'),
+  })
+  @IsNotEmpty({
+    message: i18nValidationMessage('validation.PASSWORD_REQUIRED'),
+  })
   password!: string;
 
   @ApiProperty({
@@ -46,9 +50,11 @@ export class SignupDto {
     maxLength: 50,
   })
   @IsString()
-  @IsNotEmpty({ message: 'Name is required' })
-  @MinLength(1, { message: 'Name cannot be empty' })
-  @MaxLength(50, { message: 'Name cannot exceed 50 characters' })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.NAME_REQUIRED') })
+  @MinLength(1, { message: i18nValidationMessage('validation.NAME_EMPTY') })
+  @MaxLength(50, {
+    message: i18nValidationMessage('validation.NAME_MAX_LENGTH'),
+  })
   name!: string;
 
   @ApiPropertyOptional({
@@ -57,7 +63,9 @@ export class SignupDto {
   })
   @IsOptional()
   @IsString()
-  @IsPhoneNumber(undefined, { message: 'Please provide a valid phone number' })
+  @IsPhoneNumber(undefined, {
+    message: i18nValidationMessage('validation.PHONE_INVALID'),
+  })
   phone?: string;
 
   @ApiPropertyOptional({
@@ -67,10 +75,10 @@ export class SignupDto {
   })
   @IsOptional()
   @IsEnum(UserRole, {
-    message: 'Role must be either customer, driver, or fleet manager',
+    message: i18nValidationMessage('validation.ROLE_INVALID'),
   })
   @IsNotIn([UserRole.ADMIN], {
-    message: 'Cannot register as admin.',
+    message: i18nValidationMessage('validation.ROLE_ADMIN'),
   })
   role?: UserRole = UserRole.USER;
 }

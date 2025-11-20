@@ -11,10 +11,12 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { TokenService } from '../token/token.service';
 import { User, UserDocument } from 'src/database/schemas/user.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
+    private readonly i18n: I18nService,
     private readonly tokenService: TokenService,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
@@ -28,7 +30,11 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const accessToken = this.extractTokenFromHeader(request);
     if (!accessToken) {
-      throw new UnauthorizedException('Access token is missing or invalid');
+      throw new UnauthorizedException(
+        this.i18n.t('exceptions.INVALID_ACCESS', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
     try {
       // Verify the access token
@@ -37,7 +43,11 @@ export class AuthGuard implements CanActivate {
       const user = await this.userModel.findById(payload._id);
 
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException(
+          this.i18n.t('exceptions.NO_USER', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
       }
 
       if (!user.refreshToken)
@@ -52,7 +62,9 @@ export class AuthGuard implements CanActivate {
       if (err instanceof UnauthorizedException) throw err;
 
       throw new UnauthorizedException(
-        'Access/Refresh token is invalid or expired',
+        this.i18n.t('exceptions.INVALID_REFRESH', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 

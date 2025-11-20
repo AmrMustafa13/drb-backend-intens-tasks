@@ -1,0 +1,21 @@
+{
+  "EMAIL_REQUIRED": "Email is required",
+  "EMAIL_INVALID": "Please provide a valid email address",
+  "PASSWORD_REQUIRED": "Password is required",
+  "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long",
+  "PASSWORD_STRONG": "Password must contain uppercase, lowercase, number and special character",
+  "NAME_REQUIRED": "Name is required",
+  "NAME_EMPTY": "Name cannot be empty",
+  "NAME_MAX_LENGTH": "Name cannot exceed 50 characters",
+  "PHONE_INVALID": "Please provide a valid phone number",
+  "ROLE_INVALID": "Role must be either customer, driver, or fleet manager",
+  "ROLE_ADMIN": "Cannot register as admin",
+  "CURRENT_PASSWORD_REQUIRED": "Current password is required",
+  "ID_INVALID": "Id must be a valid MongoDB ObjectId",
+  "DRIVER_ID_REQUIRED": "Driver ID is required",
+  "PLATE_NUMBER_REQUIRED": "Plate number is required",
+  "MODEL_REQUIRED": "Model is required",
+  "MANUFACTURER_REQUIRED": "Manufacturer is required",
+  "YEAR_REQUIRED": "Year is required",
+  "TYPE_REQUIRED": "Type is required"
+}

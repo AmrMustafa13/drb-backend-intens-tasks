@@ -19,10 +19,12 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { compareHash, hashToken, hashVal } from 'src/utils/functions';
 import { User, UserDocument } from 'src/database/schemas/user.schema';
 import { AccessTokenPayload, APIResponse } from 'src/common/types/api.type';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly i18n: I18nService,
     private readonly tokenService: TokenService,
     private readonly configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -68,7 +70,11 @@ export class AuthService {
     // check if user exists
     let user = await this.userModel.findOne({ email: signupDto.email });
     if (user) {
-      throw new ConflictException('An account with this email already exists');
+      throw new ConflictException(
+        this.i18n.t('exceptions.EMAIL_EXISTS', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const { password, ...userData } = signupDto;
@@ -90,7 +96,9 @@ export class AuthService {
     const accessToken = await this.tokenService.generateAccessToken(payload);
 
     const result: APIResponse = {
-      message: 'Account created successfully',
+      message: this.i18n.t('messages.ACCOUNT_CREATED', {
+        lang: I18nContext.current()?.lang,
+      }),
       data: user.cleanUser(),
       accessToken,
     };
@@ -104,12 +112,20 @@ export class AuthService {
     // check if email matches no account
     const user = await this.userModel.findOne({ email });
     if (!user)
-      throw new NotFoundException('Wrong email or password. Please try again');
+      throw new NotFoundException(
+        this.i18n.t('exceptions.WRONG_CRED', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     // compare password hashes
     const correctPass = await compareHash(password, user.password);
     if (!correctPass)
-      throw new NotFoundException('Wrong email or password. Please try again');
+      throw new NotFoundException(
+        this.i18n.t('exceptions.WRONG_CRED', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const payload: AccessTokenPayload = {
       _id: user._id.toString(),
@@ -128,7 +144,9 @@ export class AuthService {
     });
 
     const result: APIResponse = {
-      message: 'Logged in successfully',
+      message: this.i18n.t('messages.LOGGED_IN', {
+        lang: I18nContext.current()?.lang,
+      }),
       accessToken,
       refreshToken,
     };
@@ -155,7 +173,9 @@ export class AuthService {
         .lean();
 
       const result: APIResponse = {
-        message: 'Account updated successfully',
+        message: this.i18n.t('messages.ACCOUNT_UPDATED', {
+          lang: I18nContext.current()?.lang,
+        }),
         data: updatedUser!.cleanUser,
       };
       return result;
@@ -163,7 +183,9 @@ export class AuthService {
       // handle duplicate key error
       if (error instanceof MongoError && error.code === 11000)
         throw new ConflictException(
-          'An account with this email already exists',
+          this.i18n.t('exceptions.EMAIL_EXISTS', {
+            lang: I18nContext.current()?.lang,
+          }),
         );
       throw error;
     }
@@ -174,14 +196,20 @@ export class AuthService {
 
     if (currentPassword === newPassword)
       throw new BadRequestException(
-        'New password must be different from current password',
+        this.i18n.t('exceptions.DIFF_NEW_PASS', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
 
     const user = (await this.userModel.findById(_id))!;
 
     const correctPass = await compareHash(currentPassword, user.password);
     if (!correctPass)
-      throw new UnauthorizedException('Current password is incorrect');
+      throw new UnauthorizedException(
+        this.i18n.t('exceptions.INC_PASS', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const hashedPassword = await hashVal(newPassword);
     user.password = hashedPassword;
@@ -190,7 +218,9 @@ export class AuthService {
     await user.save();
 
     const result: APIResponse = {
-      message: 'Password changed successfully',
+      message: this.i18n.t('messages.PASSWORD_CHANGED', {
+        lang: I18nContext.current()?.lang,
+      }),
     };
 
     return result;
@@ -205,7 +235,11 @@ export class AuthService {
       .select('_id email name');
 
     if (!user) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException(
+        this.i18n.t('exceptions.INVALID_REFRESH', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const payload: AccessTokenPayload = {
@@ -233,7 +267,9 @@ export class AuthService {
     await user.save();
 
     const result: APIResponse = {
-      message: 'Logged out successfully',
+      message: this.i18n.t('messages.LOGGED_OUT', {
+        lang: I18nContext.current()?.lang,
+      }),
     };
     return result;
   }

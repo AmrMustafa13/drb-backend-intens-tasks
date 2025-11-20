@@ -27,11 +27,15 @@ import { SignupDto } from './dto/signup.dto';
 import { AuthService } from './auth.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
@@ -155,7 +159,11 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     if (!('refreshToken' in req.cookies))
-      throw new UnauthorizedException('Refresh token not found in cookies');
+      throw new UnauthorizedException(
+        this.i18n.t('exceptions.REFRESH_NOT_FOUND', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const { refreshToken, ...result } = await this.authService.refresh(
       req.cookies.refreshToken as string,
