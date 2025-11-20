@@ -149,7 +149,17 @@ export class VehiclesService {
     return updated;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vehicle`;
+  async remove(id: string) {
+    const vehicle = await this.vehicleModel.findById(id);
+
+    if (!vehicle) {
+      throw new NotFoundException(this.i18n.t('vehicle.not_found'));
+    }
+
+    await this.vehicleModel.deleteOne({ _id: id });
+
+    return {
+      message: this.i18n.t('vehicle.deleted_success'),
+    };
   }
 }

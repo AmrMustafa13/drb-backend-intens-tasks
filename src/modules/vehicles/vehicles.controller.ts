@@ -49,8 +49,10 @@ export class VehiclesController {
     return this.vehiclesService.update(id, updateVehicleDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.vehiclesService.remove(+id);
+    return this.vehiclesService.remove(id);
   }
 }
