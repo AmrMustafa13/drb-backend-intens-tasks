@@ -12,6 +12,7 @@ import { Model } from 'mongoose';
 import { APIResponse } from 'src/common/types/api.type';
 import { User, UserDocument } from 'src/database/schemas/user.schema';
 import { UserRole } from 'src/common/enums/user.enum';
+import { IdDto } from 'src/common/dtos/id.dto';
 
 @Injectable()
 export class VehicleService {
@@ -57,6 +58,16 @@ export class VehicleService {
     const res: APIResponse = {
       size: vehicles.length,
       data: vehicles,
+    };
+    return res;
+  }
+
+  async findOne(id: string) {
+    const vehicle = await this.vehicleModel.findById(id);
+    if (!vehicle) throw new NotFoundException('No vehicle found with this id');
+
+    const res: APIResponse = {
+      data: vehicle,
     };
     return res;
   }
