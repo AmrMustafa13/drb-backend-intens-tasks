@@ -1,0 +1,11 @@
+{
+    "notFound": "Vehicle not found",
+    "plateExists": "Plate number already exists",
+    "created": "Vehicle created successfully",
+    "updated": "Vehicle updated successfully",
+    "deleted": "Vehicle deleted successfully",
+    "driverAssigned": "Driver assigned successfully",
+    "driverUnassigned": "Driver unassigned successfully",
+    "alreadyAssigned": "Driver is already assigned to another vehicle",
+    "invalidDriver": "Invalid driver ID or not a driver role"
+}
