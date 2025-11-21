@@ -1,0 +1,6 @@
+{
+  "EMAIL_EXISTS": "البريد الإلكتروني مستخدم بالفعل",
+  "USER_NOT_FOUND": "المستخدم غير موجود",
+  "CURRENT_PASSWORD_INCORRECT": "كلمة المرور الحالية غير صحيحة",
+  "PASSWORD_CHANGED": "تم تغيير كلمة المرور بنجاح"
+}

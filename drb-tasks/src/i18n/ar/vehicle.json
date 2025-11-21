@@ -1,0 +1,7 @@
+{
+  "VEHICLE_NOT_FOUND": "المركبة غير موجودة",
+  "DRIVER_NOT_FOUND": "السائق غير موجود",
+  "DRIVER_ALREADY_ASSIGNED": "السائق مُعين بالفعل على مركبة أخرى",
+  "VEHICLE_DELETED": "تم حذف المركبة بنجاح",
+  "INVALID_VEHICLE_ID": "معرف المركبة غير صالح"
+}
