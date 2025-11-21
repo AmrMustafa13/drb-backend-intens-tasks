@@ -8,6 +8,7 @@
   "MANUFACTURER_STRING": "اسم المصنع يجب أن يكون نصاً",
   "YEAR_NUMBER": "سنة الصنع يجب أن تكون رقماً",
   "TYPE_INVALID": "نوع المركبة غير صحيح",
+  "ROLE_INVALID": "الدور غير صحيح",
   "SIM_STRING": "رقم الشريحة (SIM) يجب أن يكون نصاً",
   "DEVICE_STRING": "معرف الجهاز (Device ID) يجب أن يكون نصاً",
   "DRIVER_ID_INVALID": "معرف السائق غير صحيح",

@@ -8,6 +8,7 @@
   "MANUFACTURER_STRING": "Manufacturer must be text",
   "YEAR_NUMBER": "Year must be a number",
   "TYPE_INVALID": "Vehicle type is invalid",
+  "ROLE_INVALID": "Role is invalid",
   "SIM_STRING": "SIM number must be text",
   "DEVICE_STRING": "Device ID must be text",
   "DRIVER_ID_INVALID": "Invalid Driver ID",

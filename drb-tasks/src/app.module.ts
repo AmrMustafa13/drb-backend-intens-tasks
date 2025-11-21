@@ -13,8 +13,6 @@ import {
   QueryResolver,
 } from 'nestjs-i18n';
 import path from 'path';
-// import validationSchema from './config/validation.schema';
-
 @Module({
   imports: [
     I18nModule.forRoot({

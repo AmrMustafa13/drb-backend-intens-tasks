@@ -1,68 +1,38 @@
-// src/common/filters/all-exceptions.filter.ts
 import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
-  HttpException,
-  HttpStatus, // Import HttpStatus
-  Logger, // Import Logger
+  HttpStatus,
+  Logger,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { HttpAdapterHost } from '@nestjs/core';
 
-@Catch() // Catching all exceptions
+@Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  // Instantiate a logger for this filter
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
+    console.log('all exception');
+
+    const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
 
-    // Determine the status code
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR; // Default to 500
+    const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    // Get the error message
-    let message: string | object = 'Internal Server Error';
+    // 1. Log the real error (Stack trace) for the developer
+    this.logger.error('CRITICAL SERVER ERROR', exception);
 
-    if (exception instanceof HttpException) {
-      // For HttpExceptions, get the response
-      const exceptionResponse = exception.getResponse();
-      message =
-        typeof exceptionResponse === 'object'
-          ? (exceptionResponse as any).message
-          : exceptionResponse;
-    } else if (exception instanceof Error) {
-      // For standard JavaScript errors, use the error message
-      message = exception.message;
-    }
-
-    const errorResponse = {
-      statusCode: status,
+    // 2. Prepare a safe response for the user
+    const responseBody = {
+      statusCode: httpStatus,
       timestamp: new Date().toISOString(),
-      path: request.url,
-      method: request.method,
-      message: message,
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      method: httpAdapter.getRequestMethod(ctx.getRequest()),
+      message: 'Internal Server Error', // Or use a translation key like 'common.INTERNAL_ERROR'
     };
 
-    // Log the error
-    // For unknown errors, log the full stack trace
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(
-        `[${request.method} ${request.url}] ${status} - Error: ${exception instanceof Error ? exception.stack : JSON.stringify(exception)}`,
-      );
-    } else {
-      // For known errors (HttpExceptions), just log the response
-      this.logger.warn(
-        `[${request.method} ${request.url}] ${status} - Message: ${JSON.stringify(message)}`,
-      );
-    }
-
-    // Send the response
-    response.status(status).json(errorResponse);
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }
