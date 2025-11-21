@@ -8,17 +8,21 @@ export class PaginationDto {
 	@IsOptional()
 	@Type(() => Number)
 	@IsInt({ message: i18nValidationMessage('validation.common.IS_INT') })
-	@Min(1, { message: i18nValidationMessage('validation.vehicle.PAGE_MIN') })
+	@Min(1, {
+		message: i18nValidationMessage('validation.common.MIN_VALUE', { min: 1 }),
+	})
 	page?: number = 1;
 
 	@ApiPropertyOptional({ default: 10, minimum: 1, maximum: 100 })
 	@IsOptional()
 	@Type(() => Number)
 	@IsInt({ message: i18nValidationMessage('validation.common.IS_INT') })
-	@Min(1, { message: i18nValidationMessage('validation.vehicle.LIMIT_MIN') })
+	@Min(1, {
+		message: i18nValidationMessage('validation.common.MIN_VALUE', { min: 1 }),
+	})
 	@Max(100, {
-		message: i18nValidationMessage('validation.vehicle.LIMIT_MAX', {
-			args: { max: 100 },
+		message: i18nValidationMessage('validation.common.MAX_VALUE', {
+			max: 100,
 		}),
 	})
 	limit?: number = 10;
@@ -33,7 +37,9 @@ export class PaginationDto {
 	@ApiPropertyOptional({ enum: ['asc', 'desc'], default: 'desc' })
 	@IsOptional()
 	@IsIn(['asc', 'desc'], {
-		message: i18nValidationMessage('validation.vehicle.SORT_ORDER_INVALID'),
+		message: i18nValidationMessage('validation.common.IS_IN', {
+			value: 'asc, desc',
+		}),
 	})
 	sortOrder?: 'asc' | 'desc' = 'desc';
 }

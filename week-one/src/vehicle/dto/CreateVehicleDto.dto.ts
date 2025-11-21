@@ -17,7 +17,7 @@ export class CreateVehicleDto {
 		message: i18nValidationMessage('validation.common.IS_STRING'),
 	})
 	@IsNotEmpty({
-		message: i18nValidationMessage('validation.vehicle.PLATE_NUMBER_REQUIRED'),
+		message: i18nValidationMessage('validation.common.IS_NOT_EMPTY'),
 	})
 	plateNumber: string;
 
@@ -25,7 +25,7 @@ export class CreateVehicleDto {
 		message: i18nValidationMessage('validation.common.IS_STRING'),
 	})
 	@IsNotEmpty({
-		message: i18nValidationMessage('validation.vehicle.MODEL_REQUIRED'),
+		message: i18nValidationMessage('validation.common.IS_NOT_EMPTY'),
 	})
 	model: string;
 
@@ -33,26 +33,26 @@ export class CreateVehicleDto {
 		message: i18nValidationMessage('validation.common.IS_STRING'),
 	})
 	@IsNotEmpty({
-		message: i18nValidationMessage('validation.vehicle.MANUFACTURER_REQUIRED'),
+		message: i18nValidationMessage('validation.common.IS_NOT_EMPTY'),
 	})
 	manufacturer: string;
 
 	@Min(1980, {
-		message: i18nValidationMessage('validation.vehicle.YEAR_MIN', {
-			args: { min: 1980 },
+		message: i18nValidationMessage('validation.common.MIN_VALUE', {
+			min: 1980,
 		}),
 	})
 	@Max(NEXT_YEAR, {
-		message: i18nValidationMessage('validation.vehicle.YEAR_MAX', {
-			args: { currentYear: NEXT_YEAR },
+		message: i18nValidationMessage('validation.common.MAX_VALUE', {
+			max: NEXT_YEAR,
 		}),
 	})
 	@IsNumber(
 		{},
-		{ message: i18nValidationMessage('validation.vehicle.YEAR_NUMBER') },
+		{ message: i18nValidationMessage('validation.common.IS_NUMBER') },
 	)
 	@IsNotEmpty({
-		message: i18nValidationMessage('validation.vehicle.YEAR_REQUIRED'),
+		message: i18nValidationMessage('validation.common.IS_NOT_EMPTY'),
 	})
 	year: number;
 
@@ -60,11 +60,10 @@ export class CreateVehicleDto {
 		message: i18nValidationMessage('validation.common.IS_STRING'),
 	})
 	@IsNotEmpty({
-		message: i18nValidationMessage('validation.vehicle.TYPE_REQUIRED'),
+		message: i18nValidationMessage('validation.common.IS_NOT_EMPTY'),
 	})
 	type: string;
 
-	// ---- Optional Data ----
 	@IsString({
 		message: i18nValidationMessage('validation.common.IS_STRING'),
 	})

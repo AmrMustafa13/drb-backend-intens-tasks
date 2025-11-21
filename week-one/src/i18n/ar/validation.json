@@ -10,8 +10,8 @@
 		"MIN_VALUE": "{property} يجب أن يكون على الأقل {min}",
 		"MAX_VALUE": "{property} يجب أن يكون على الأكثر {max}",
 		"IS_MONGO_ID": "{property} يجب أن يكون معرف MongoDB صالح",
-		"IS_ENUM": "{property} يجب أن يكون أحد القيم التالية: {values}",
-		"IS_IN": "{property} يجب أن يكون أحد القيم التالية: {values}",
+		"IS_ENUM": "{property} يجب أن يكون أحد القيم التالية: {value}",
+		"IS_IN": "{property} يجب أن يكون أحد القيم التالية: {value}",
 		"IS_INT": "{property} يجب أن يكون عدداً صحيحاً"
 	},
 	"auth": {
