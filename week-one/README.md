@@ -158,6 +158,79 @@ The API will be available at `http://localhost:5050`
   }
   ```
 
+### Vehicles
+
+#### Get All Vehicles (with Pagination)
+
+- **GET** `/vehicles`
+  - Query Parameters:
+    - `page` (optional): Page number (default: 1)
+    - `limit` (optional): Items per page (default: 10, max: 100)
+    - `sortBy` (optional): Field to sort by (default: 'createdAt')
+    - `sortOrder` (optional): 'asc' or 'desc' (default: 'desc')
+    - `type` (optional): Filter by vehicle type
+    - `manufacturer` (optional): Filter by manufacturer
+    - `assigned` (optional): 'true' for assigned vehicles, 'false' for unassigned
+  - Example: `/vehicles?page=1&limit=10&type=sedan&assigned=true&sortBy=year&sortOrder=desc`
+
+#### Get Vehicle by ID
+
+- **GET** `/vehicles/:id`
+
+#### Create Vehicle
+
+- **POST** `/vehicles`
+  - Requires: Bearer Token (Authorization header)
+  - Required Roles: Admin, Fleet Manager
+  ```json
+  {
+  	"plateNumber": "ABC-123",
+  	"model": "Camry",
+  	"manufacturer": "Toyota",
+  	"year": 2023,
+  	"type": "sedan",
+  	"simNumber": "1234567890",
+  	"deviceId": "DEV-001",
+  	"driverId": "optional-driver-id"
+  }
+  ```
+
+#### Update Vehicle
+
+- **PATCH** `/vehicles/:id`
+  - Requires: Bearer Token (Authorization header)
+  - Required Roles: Admin, Fleet Manager
+  ```json
+  {
+  	"model": "Updated Model",
+  	"year": 2024,
+  	"type": "SUV"
+  }
+  ```
+
+#### Delete Vehicle
+
+- **DELETE** `/vehicles/:id`
+  - Requires: Bearer Token (Authorization header)
+  - Required Roles: Admin only
+
+#### Assign Driver to Vehicle
+
+- **PATCH** `/vehicles/:id/assign-driver`
+  - Requires: Bearer Token (Authorization header)
+  - Required Roles: Admin, Fleet Manager
+  ```json
+  {
+  	"driverId": "driver-id-here"
+  }
+  ```
+
+#### Unassign Driver from Vehicle
+
+- **PATCH** `/vehicles/:id/unassign-driver`
+  - Requires: Bearer Token (Authorization header)
+  - Required Roles: Admin, Fleet Manager
+  - No body required
 
 ## Project Structure
 

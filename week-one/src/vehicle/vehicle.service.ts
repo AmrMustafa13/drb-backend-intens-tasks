@@ -30,9 +30,7 @@ export class VehicleService {
 			});
 
 			if (!driver) {
-				throw new NotFoundException(
-					`Driver with ID ${dto.driverId} not found`,
-				);
+				throw new NotFoundException(`Driver with ID ${dto.driverId} not found`);
 			}
 
 			// Check if driver is already assigned to another vehicle
@@ -221,6 +219,99 @@ export class VehicleService {
 				model: vehicle.model,
 				manufacturer: vehicle.manufacturer,
 			},
+		};
+	}
+
+	async assignDriver(vehicleId: string, driverId: string) {
+		// Check if vehicle exists
+		const vehicle = await this.prisma.vehicle.findUnique({
+			where: { id: vehicleId },
+		});
+
+		if (!vehicle) {
+			throw new NotFoundException(`Vehicle with ID ${vehicleId} not found`);
+		}
+
+		// Check if vehicle already has a driver
+		if (vehicle.driverId) {
+			throw new ConflictException(
+				'Vehicle already has an assigned driver. Please unassign the current driver first.',
+			);
+		}
+
+		// Check if driver exists
+		const driver = await this.prisma.user.findUnique({
+			where: { id: driverId },
+		});
+
+		if (!driver) {
+			throw new NotFoundException(`Driver with ID ${driverId} not found`);
+		}
+
+		// Check if driver is already assigned to another vehicle
+		const assignedVehicle = await this.prisma.vehicle.findFirst({
+			where: { driverId },
+		});
+
+		if (assignedVehicle) {
+			throw new ConflictException(
+				`Driver is already assigned to vehicle with plate number ${assignedVehicle.plateNumber}`,
+			);
+		}
+
+		// Assign driver to vehicle
+		const updatedVehicle = await this.prisma.vehicle.update({
+			where: { id: vehicleId },
+			data: { driverId },
+			include: {
+				driver: {
+					select: { id: true, name: true, email: true, phone: true },
+				},
+			},
+		});
+
+		return {
+			message: 'Driver assigned successfully',
+			vehicle: updatedVehicle,
+		};
+	}
+
+	async unassignDriver(vehicleId: string) {
+		// Check if vehicle exists
+		const vehicle = await this.prisma.vehicle.findUnique({
+			where: { id: vehicleId },
+		});
+
+		if (!vehicle) {
+			throw new NotFoundException(`Vehicle with ID ${vehicleId} not found`);
+		}
+
+		// Check if vehicle has an assigned driver
+		if (!vehicle.driverId) {
+			throw new BadRequestException('Vehicle does not have an assigned driver');
+		}
+
+		// Unassign driver from vehicle
+		const updatedVehicle = await this.prisma.vehicle.update({
+			where: { id: vehicleId },
+			data: { driverId: null },
+			select: {
+				id: true,
+				plateNumber: true,
+				model: true,
+				manufacturer: true,
+				year: true,
+				type: true,
+				simNumber: true,
+				deviceId: true,
+				createdAt: true,
+				updatedAt: true,
+			},
+		});
+
+		return {
+			message: 'Driver unassigned successfully',
+			vehicle: updatedVehicle,
 		};
 	}
 }

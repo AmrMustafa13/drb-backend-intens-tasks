@@ -4,6 +4,7 @@ import {
 	Delete,
 	Get,
 	HttpCode,
+	HttpStatus,
 	Param,
 	Patch,
 	Post,
@@ -11,7 +12,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
-import { CreateVehicleDto, VehicleQueryDto } from './dto';
+import { AssignDriverDto, CreateVehicleDto, VehicleQueryDto } from './dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Role } from 'src/enums/roles.enum';
@@ -78,15 +79,34 @@ export class VehicleController {
 		return this.vehicleService.deleteVehicle(id);
 	}
 
-	@ApiOperation({ summary: 'Assign driver to vehicle' })
+	@Roles(Role.ADMIN, Role.FLEET_MANAGER)
+	@UseGuards(JwtAuthGuard, RolesGuard)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Assign driver to vehicle',
+		description:
+			'Assign a driver to a vehicle. Only Admin and Fleet Manager can use this endpoint',
+	})
+	@HttpCode(HttpStatus.OK)
 	@Patch(':id/assign-driver')
-	async AssignDriver(@Param('id') id: string) {
-		// TODO: Implement assign driver logic
+	async AssignDriver(
+		@Param('id') id: string,
+		@Body() dto: AssignDriverDto,
+	) {
+		return this.vehicleService.assignDriver(id, dto.driverId);
 	}
 
-	@ApiOperation({ summary: 'Unassign driver from vehicle' })
+	@Roles(Role.ADMIN, Role.FLEET_MANAGER)
+	@UseGuards(JwtAuthGuard, RolesGuard)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Unassign driver from vehicle',
+		description:
+			'Remove driver assignment from a vehicle. Only Admin and Fleet Manager can use this endpoint',
+	})
+	@HttpCode(HttpStatus.OK)
 	@Patch(':id/unassign-driver')
 	async UnassignDriver(@Param('id') id: string) {
-		// TODO: Implement unassign driver logic
+		return this.vehicleService.unassignDriver(id);
 	}
 }
