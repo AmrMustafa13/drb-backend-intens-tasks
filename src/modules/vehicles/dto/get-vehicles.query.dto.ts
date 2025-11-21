@@ -7,6 +7,7 @@ import {
   IsBooleanString,
 } from 'class-validator';
 import { Type } from '../enums/Type.enum';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class GetVehiclesQueryDto {
   @ApiPropertyOptional({
@@ -15,7 +16,7 @@ export class GetVehiclesQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsNumberString()
+  @IsNumberString({}, { message: i18nValidationMessage('validation.isNumber') })
   limit?: string;
 
   @ApiPropertyOptional({
@@ -24,7 +25,7 @@ export class GetVehiclesQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsNumberString()
+  @IsNumberString({}, { message: i18nValidationMessage('validation.isNumber') })
   page?: string;
 
   @ApiPropertyOptional({
@@ -34,7 +35,7 @@ export class GetVehiclesQueryDto {
     enum: Type,
   })
   @IsOptional()
-  @IsEnum(Type)
+  @IsEnum(Type, { message: i18nValidationMessage('validation.isEnumType') })
   type?: Type;
 
   @ApiPropertyOptional({
@@ -43,7 +44,7 @@ export class GetVehiclesQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   manufacturer?: string;
 
   @ApiPropertyOptional({
@@ -53,7 +54,7 @@ export class GetVehiclesQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsBooleanString()
+  @IsBooleanString({ message: i18nValidationMessage('validation.isBoolean') })
   assigned?: string;
 
   @ApiPropertyOptional({
@@ -62,7 +63,7 @@ export class GetVehiclesQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   sortBy?: string;
 
   @ApiPropertyOptional({
@@ -71,6 +72,6 @@ export class GetVehiclesQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   order?: string;
 }

@@ -1,0 +1,8 @@
+{
+    "not_found": "User not found!",
+    "already_exist": "Email already exists!",
+    "incorrect_pass": "Current password is incorrect!",
+    "notAuth": "User not authenticated!",
+    "passChanged": "Password changed successfully",
+    "loggedOut": "Logged out successfully"
+}

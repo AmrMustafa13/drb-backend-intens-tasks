@@ -1,0 +1,18 @@
+{
+  "isNotEmpty": "{property} مطلوب",
+  "isEmail": "{property} يجب أن يكون بريد إلكتروني صحيح",
+  "isString": "{property} يجب أن يكون نص",
+  "isNumber": "{property} يجب أن يكون رقم",
+  "passMinLength": "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل",
+  "minYear": "السنة يجب أن تكون 1900 على الأقل",
+  "maxYear": "السنة يجب ألا تتجاوز 2025",
+  "isEnumType": "النوع يجب أن يكون أحد القيم التالية: car, bus, truck, van",
+  "isBoolean": "{property} يجب أن يكون قيمة منطقية",
+  "isDate": "{property} يجب أن يكون تاريخ صحيح",
+  "matches": "{property} يجب أن يطابق النمط المطلوب",
+  "isPhoneNumber": "{property} يجب أن يكون رقم هاتف صحيح",
+  "isUrl": "{property} يجب أن يكون رابط صحيح",
+  "isArray": "{property} يجب أن يكون مصفوفة",
+  "whitelistValidation": "الخاصية {property} غير مسموح بها",
+  "cannotUpdate": "لا يمكن تحديث {property}"
+}

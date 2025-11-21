@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 import dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { I18nValidationExceptionFilter } from 'nestjs-i18n';
+import {
+  I18nService,
+  I18nValidationPipe,
+} from 'nestjs-i18n';
+import { I18nExceptionFilter } from './common/filters/i18n-exception.filter';
 
 async function bootstrap() {
   dotenv.config();
@@ -12,14 +15,17 @@ async function bootstrap() {
   app.enableCors();
 
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  );
-
-  app.useGlobalFilters(
-    new I18nValidationExceptionFilter({
-      errorFormatter: (errors) => errors,
+    new I18nValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      errorHttpStatusCode: 400,
     }),
   );
+
+  const i18nService = app.get(I18nService) as I18nService<Record<string, unknown>>;
+
+  app.useGlobalFilters(new I18nExceptionFilter(i18nService));
 
   const config = new DocumentBuilder()
     .setTitle('Fleet & Vehicle Management Module')

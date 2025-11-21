@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { Type } from '../enums/Type.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class CreateVehicleDto {
   @ApiProperty({
@@ -16,8 +17,8 @@ export class CreateVehicleDto {
     example: 'ABC-1234',
     required: true,
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   plateNumber: string;
 
   @ApiProperty({
@@ -25,8 +26,8 @@ export class CreateVehicleDto {
     example: 'Corolla',
     required: true,
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   model: string;
 
   @ApiProperty({
@@ -34,8 +35,8 @@ export class CreateVehicleDto {
     example: 'Toyota',
     required: true,
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   manufacturer: string;
 
   @ApiProperty({
@@ -45,10 +46,10 @@ export class CreateVehicleDto {
     maximum: new Date().getFullYear(),
     required: true,
   })
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(1900)
-  @Max(new Date().getFullYear())
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsNumber({}, { message: i18nValidationMessage('validation.isNumber') })
+  @Min(1900, { message: i18nValidationMessage('validation.minYear') })
+  @Max(new Date().getFullYear(), { message: i18nValidationMessage('validation.maxYear') })
   year: number;
 
   @ApiProperty({
@@ -57,8 +58,8 @@ export class CreateVehicleDto {
     example: Type.CAR,
     required: true,
   })
-  @IsNotEmpty()
-  @IsEnum(Type)
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsEnum(Type, { message: i18nValidationMessage('validation.isEnumType') })
   type: Type;
 
   @ApiProperty({
@@ -67,7 +68,7 @@ export class CreateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   simNumber?: string;
 
   @ApiProperty({
@@ -76,7 +77,7 @@ export class CreateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   deviceId?: string;
 
   @ApiProperty({
@@ -85,6 +86,6 @@ export class CreateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   driverId?: string;
 }

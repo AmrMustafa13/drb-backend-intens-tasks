@@ -1,27 +1,37 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { 
+  IsEmail, 
+  IsNotEmpty, 
+  IsOptional, 
+  IsString, 
+  MinLength 
+} from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class RegisterDto {
   @ApiProperty()
-  @IsEmail()
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsEmail({}, { message: i18nValidationMessage('validation.isEmail') })
   email: string;
 
   @ApiProperty({ minLength: 8 })
-  @IsString()
-  @MinLength(8)
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsString({ message: i18nValidationMessage('validation.isString') })
+  @MinLength(8, { message: i18nValidationMessage('validation.passMinLength') })
   password: string;
 
   @ApiProperty()
-  @IsString()
+  @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   name: string;
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   phone?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   role?: string;
 }

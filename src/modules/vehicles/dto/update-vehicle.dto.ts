@@ -1,6 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  Min,
+  Max,
+} from 'class-validator';
 import { Type } from '../enums/Type.enum';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class UpdateVehicleDto {
   @ApiPropertyOptional({
@@ -9,7 +16,7 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   model?: string;
 
   @ApiPropertyOptional({
@@ -18,7 +25,7 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   manufacturer?: string;
 
   @ApiPropertyOptional({
@@ -29,9 +36,11 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsNumber()
-  @Min(1900)
-  @Max(new Date().getFullYear())
+  @IsNumber({}, { message: i18nValidationMessage('validation.isNumber') })
+  @Min(1900, { message: i18nValidationMessage('validation.minYear') })
+  @Max(new Date().getFullYear(), {
+    message: i18nValidationMessage('validation.maxYear'),
+  })
   year?: number;
 
   @ApiPropertyOptional({
@@ -41,7 +50,7 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   type?: string;
 
   @ApiPropertyOptional({
@@ -50,7 +59,7 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   simNumber?: string;
 
   @ApiPropertyOptional({
@@ -59,7 +68,7 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   deviceId?: string;
 
   @ApiPropertyOptional({
@@ -68,6 +77,6 @@ export class UpdateVehicleDto {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({ message: i18nValidationMessage('validation.isString') })
   driverId?: string;
 }

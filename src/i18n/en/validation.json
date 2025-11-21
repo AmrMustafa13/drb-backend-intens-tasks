@@ -1,0 +1,18 @@
+{
+  "isNotEmpty": "{property} is required",
+  "isEmail": "{property} must be a valid email",
+  "isString": "{property} must be a string",
+  "isNumber": "{property} must be a number",
+  "passMinLength": "Password must contain at least 8 characters",
+  "minYear": "year must be at least 1900",
+  "maxYear": "year must not exceed 2025",
+  "isEnumType": "type must be one of the following values: car, bus, truck, van",
+  "isBoolean": "{property} must be a boolean value",
+  "isDate": "{property} must be a valid date",
+  "matches": "{property} must match the required pattern",
+  "isPhoneNumber": "{property} must be a valid phone number",
+  "isUrl": "{property} must be a valid URL",
+  "isArray": "{property} must be an array",
+  "whitelistValidation": "Property {property} is not allowed",
+  "cannotUpdate": "Cannot update {property}"
+}

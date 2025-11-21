@@ -20,6 +20,7 @@ import { UserService } from '../users/users.service';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
+import { I18nService } from 'nestjs-i18n';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -27,6 +28,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private readonly i18n: I18nService,
   ) {}
 
   @Post('register')
@@ -46,7 +48,7 @@ export class AuthController {
   async getProfile(@Req() req: any) {
     const user = await this.userService.findById(req.user.sub);
     if (!user) {
-      throw new NotFoundException('User not found!');
+      throw new NotFoundException(this.i18n.t('user.not_found'));
     }
     return user;
   }
@@ -60,7 +62,7 @@ export class AuthController {
   ) {
     const user = await this.userService.update(req.user.sub, updateDto);
     if (!user) {
-      throw new NotFoundException('User not found!');
+      throw new NotFoundException(this.i18n.t('user.not_found'));
     }
     return user;
   }
@@ -75,15 +77,15 @@ export class AuthController {
   @ApiBearerAuth()
   @Patch('change-password')
   async changePassword(@Req() req: any, @Body() dto: ChangePasswordDto) {
-    if (!req.user) throw new UnauthorizedException('User not authenticated');
+    if (!req.user) throw new UnauthorizedException(this.i18n.t('user.notAuth'));
     await this.userService.changePassword(req.user.sub, dto);
-    return { message: 'Password changed successfully' };
+    return { message: this.i18n.t('user.passChanged') };
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: any) {
-    await this.authService.logout(req.user.sub); 
-    return { message: 'Logged out successfully' };
+    await this.authService.logout(req.user.sub);
+    return { message: this.i18n.t('user.loggedOut') };
   }
 }

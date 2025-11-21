@@ -1,0 +1,13 @@
+{
+  "badRequest": "طلب غير صالح",
+  "badRequestMessage": "طلب غير صالح",
+  "unauthorized": "غير مصرح",
+  "unauthorizedMessage": "غير مصرح به",
+  "forbidden": "محظور",
+  "forbiddenMessage": "الوصول محظور",
+  "notFound": "غير موجود",
+  "notFoundMessage": "المورد غير موجود",
+  "internalServerError": "خطأ في الخادم الداخلي",
+  "internalServerErrorMessage": "حدث خطأ في الخادم",
+  "error": "خطأ"
+}

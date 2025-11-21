@@ -177,7 +177,9 @@ export class VehiclesService {
     }
 
     // check driver is available
-    const exists = await this.vehicleModel.findOne({ driverId: new Types.ObjectId(driverId) });
+    const exists = await this.vehicleModel.findOne({
+      driverId: new Types.ObjectId(driverId),
+    });
     if (exists) {
       throw new BadRequestException(this.i18n.t('driver.already_assigned'));
     }

@@ -1,0 +1,13 @@
+{
+  "badRequest": "Bad Request",
+  "badRequestMessage": "Bad Request",
+  "unauthorized": "Unauthorized",
+  "unauthorizedMessage": "Unauthorized",
+  "forbidden": "Forbidden",
+  "forbiddenMessage": "Forbidden",
+  "notFound": "Not Found",
+  "notFoundMessage": "Not Found",
+  "internalServerError": "Internal Server Error",
+  "internalServerErrorMessage": "Internal Server Error",
+  "error": "Error"
+}
