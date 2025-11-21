@@ -43,12 +43,23 @@ export class VehicleController {
 		description:
 			'Get all vehicles with pagination, filtering, and sorting options',
 	})
+	@UseGuards(JwtAuthGuard, RolesGuard)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Get All vehicles',
+		description: 'Get all vehicles details.',
+	})
 	@Get()
 	async GetAllVehicle(@Query() query: VehicleQueryDto) {
 		return this.vehicleService.GetAllVehicles(query);
 	}
 
-	@ApiOperation({ summary: 'Get vehicle by ID' })
+	@UseGuards(JwtAuthGuard, RolesGuard)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Get vehicle By ID',
+		description: 'Get vehicle details By ID.',
+	})
 	@Get(':id')
 	async GetVehicleById(@Param('id') id: string) {
 		return this.vehicleService.GetVehicleById(id);
@@ -89,10 +100,7 @@ export class VehicleController {
 	})
 	@HttpCode(HttpStatus.OK)
 	@Patch(':id/assign-driver')
-	async AssignDriver(
-		@Param('id') id: string,
-		@Body() dto: AssignDriverDto,
-	) {
+	async AssignDriver(@Param('id') id: string, @Body() dto: AssignDriverDto) {
 		return this.vehicleService.assignDriver(id, dto.driverId);
 	}
 
