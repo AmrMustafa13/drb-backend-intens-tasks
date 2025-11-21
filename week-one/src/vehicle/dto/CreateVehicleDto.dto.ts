@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
 	IsMongoId,
 	IsNotEmpty,

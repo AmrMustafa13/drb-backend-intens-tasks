@@ -9,10 +9,61 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PaginationUtil } from 'src/common/utils/pagination.util';
 import { PaginatedResult } from 'src/common/interfaces/pagination.interface';
 import { Vehicle } from '@prisma/client';
+import { UpdateVehicleDto } from './dto/UpdateVehicleDto.dto';
 
 @Injectable()
 export class VehicleService {
 	constructor(private prisma: PrismaService) {}
+	async updateVehicle(id: string, dto: UpdateVehicleDto) {
+		// Check if the vehicle exists
+		const vehicle = await this.prisma.vehicle.findUnique({ where: { id } });
+
+		if (!vehicle) {
+			throw new NotFoundException(`Vehicle with ID ${id} not found`);
+		}
+
+		// If driverId is explicitly provided in the DTO, validate the driver
+		if (dto.driverId) {
+			// Check if driver exists
+			const driver = await this.prisma.user.findUnique({
+				where: { id: dto.driverId },
+			});
+
+			if (!driver) {
+				throw new NotFoundException(
+					`Driver with ID ${dto.driverId} not found`,
+				);
+			}
+
+			// Check if driver is already assigned to another vehicle
+			const assignedVehicle = await this.prisma.vehicle.findFirst({
+				where: {
+					driverId: dto.driverId,
+					NOT: { id }, // Exclude current vehicle
+				},
+			});
+
+			if (assignedVehicle) {
+				throw new ConflictException(
+					`Driver is already assigned to vehicle with plate number ${assignedVehicle.plateNumber}`,
+				);
+			}
+		}
+
+		// Update the vehicle (only with provided fields)
+		const updatedVehicle = await this.prisma.vehicle.update({
+			where: { id },
+			data: dto,
+			include: {
+				driver: {
+					select: { id: true, name: true, email: true, phone: true },
+				},
+			},
+		});
+
+		return updatedVehicle;
+	}
+
 
 	async GetVehicleById(id: string): Promise<Vehicle> {
 		const vehicle = await this.prisma.vehicle.findUnique({
@@ -93,7 +144,6 @@ export class VehicleService {
 				this.prisma.vehicle.count({ where }),
 			]);
 
-			// Use pagination utility to format response
 			return PaginationUtil.paginate(vehicles, total, page, limit);
 		} catch (error) {
 			throw new BadRequestException('Failed to fetch vehicles');
@@ -148,4 +198,7 @@ export class VehicleService {
 
 		return vehicle;
 	}
+
+
+
 }

@@ -15,6 +15,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Role } from 'src/enums/roles.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { UpdateVehicleDto } from './dto/UpdateVehicleDto.dto';
 
 @ApiTags('Vehicles')
 @Controller('vehicles')
@@ -50,10 +51,16 @@ export class VehicleController {
 		return this.vehicleService.GetVehicleById(id);
 	}
 
-	@ApiOperation({ summary: 'Update vehicle' })
+	@Roles(Role.ADMIN, Role.FLEET_MANAGER)
+	@UseGuards(JwtAuthGuard, RolesGuard)
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Update vehicle',
+		description: 'Update vehicle details. Only Admin and Fleet Manager can use this endpoint',
+	})
 	@Patch(':id')
-	async UpdateVehicle(@Param('id') id: string) {
-		// TODO: Implement update logic
+	async UpdateVehicle(@Param('id') id: string, @Body() dto: UpdateVehicleDto) {
+		return this.vehicleService.updateVehicle(id, dto);
 	}
 
 	@ApiOperation({ summary: 'Delete vehicle' })
