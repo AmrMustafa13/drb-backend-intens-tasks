@@ -1,0 +1,162 @@
+{
+  "validation": {
+    "plateNumber": {
+      "required": "Plate number is required",
+      "string": "Plate number must be a string",
+      "unique": "Plate number must be unique",
+      "length": "Plate number must be between 2 and 20 characters",
+      "matches": "Plate number can only contain letters, numbers, hyphens, and spaces"
+    },
+    "model": {
+      "required": "Model is required",
+      "string": "Model must be a string",
+      "length": "Model must be between 1 and 50 characters"
+    },
+    "manufacturer": {
+      "required": "Manufacturer is required",
+      "string": "Manufacturer must be a string",
+      "length": "Manufacturer must be between 1 and 50 characters"
+    },
+    "year": {
+      "required": "Year is required",
+      "number": "Year must be a number",
+      "min": "Year must be at least 1900",
+      "max": "Year cannot be in the future"
+    },
+    "type": {
+      "required": "Vehicle type is required",
+      "enum": "Vehicle type must be one of: car, van, bus, truck, motorcycle"
+    },
+    "driverId": {
+      "required": "Driver ID is required",
+      "invalid": "Invalid driver ID format"
+    },
+    "simNumber": {
+      "string": "SIM number must be a string",
+      "length": "SIM number must not exceed 20 characters"
+    },
+    "deviceId": {
+      "string": "Device ID must be a string",
+      "length": "Device ID must not exceed 50 characters"
+    },
+    "email": {
+      "required": "Email is required",
+      "invalid": "Please provide a valid email"
+    },
+    "password": {
+      "required": "Password is required",
+      "string": "Password must be a string",
+      "minLength": "Password must be at least 8 characters long",
+      "matches": "Password must contain uppercase, lowercase, and number/special character"
+    },
+    "name": {
+      "required": "Name is required",
+      "string": "Name must be a string",
+      "minLength": "Name must be at least 2 characters long"
+    },
+    "phone": {
+      "string": "Phone must be a string"
+    },
+    "role": {
+      "enum": "Invalid role. Allowed: user, fleet_manager"
+    },
+    "currentPassword": {
+      "required": "Current password is required",
+      "string": "Current password must be a string"
+    },
+    "newPassword": {
+      "required": "New password is required",
+      "string": "New password must be a string",
+      "minLength": "New password must be at least 8 characters long",
+      "matches": "New password must contain uppercase, lowercase, and number/special character"
+    },
+    "refreshToken": {
+      "required": "Refresh token is required",
+      "string": "Refresh token must be a string"
+    },
+    "page": {
+      "int": "Page must be an integer",
+      "min": "Page must be at least 1"
+    },
+    "limit": {
+      "int": "Limit must be an integer",
+      "min": "Limit must be at least 1",
+      "max": "Limit cannot exceed 100"
+    },
+    "assignmentStatus": {
+      "enum": "Assignment status must be either \"assigned\" or \"unassigned\""
+    },
+    "sortBy": {
+      "string": "Sort by must be a string"
+    },
+    "search": {
+      "string": "Search must be a string"
+    }
+  },
+  "errors": {
+    "vehicle": {
+      "plateNumberExists": "A vehicle with this plate number already exists",
+      "notFound": "Vehicle not found",
+      "invalidId": "Invalid vehicle ID",
+      "noDriverAssigned": "No driver is currently assigned to this vehicle",
+      "createFailed": "Failed to create vehicle",
+      "updateFailed": "Failed to update vehicle",
+      "deleteFailed": "Failed to delete vehicle"
+    },
+    "driver": {
+      "notFound": "Driver not found",
+      "invalidId": "Invalid driver ID",
+      "alreadyAssigned": "This driver is already assigned to another vehicle",
+      "assignmentFailed": "Failed to assign driver"
+    },
+    "auth": {
+      "unauthorized": "Unauthorized",
+      "forbidden": "Forbidden - Insufficient permissions",
+      "invalidToken": "Invalid authentication token",
+      "invalidCredentials": "Invalid credentials",
+      "emailExists": "Email already exists",
+      "userNotFound": "User not found",
+      "passwordMismatch": "Current password is incorrect"
+    },
+    "common": {
+      "badRequest": "Bad request",
+      "internalError": "Internal server error",
+      "notFound": "Not found"
+    }
+  },
+  "messages": {
+    "vehicle": {
+      "created": "Vehicle created successfully",
+      "updated": "Vehicle updated successfully",
+      "deleted": "Vehicle deleted successfully",
+      "retrieved": "Vehicle retrieved successfully",
+      "listRetrieved": "Vehicle list retrieved successfully"
+    },
+    "driver": {
+      "assigned": "Driver assigned successfully",
+      "unassigned": "Driver unassigned successfully"
+    },
+    "common": {
+      "success": "Operation completed successfully",
+      "welcome": "Welcome"
+    }
+  },
+  "fields": {
+    "plateNumber": "Plate Number",
+    "model": "Model",
+    "manufacturer": "Manufacturer",
+    "year": "Year",
+    "type": "Type",
+    "simNumber": "SIM Number",
+    "deviceId": "Device ID",
+    "driverId": "Driver ID",
+    "driver": "Driver"
+  },
+  "vehicleTypes": {
+    "car": "Car",
+    "van": "Van",
+    "bus": "Bus",
+    "truck": "Truck",
+    "motorcycle": "Motorcycle"
+  }
+}
