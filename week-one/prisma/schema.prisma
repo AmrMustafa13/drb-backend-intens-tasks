@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+enum Role {
+  user
+  admin
+  fleet_manager
+}
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  password     String
+  name         String
+  phone        String?
+  
+  role         Role   @default(user)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  vehicles Vehicle[]
+}
+
+
+
+model Vehicle {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  plateNumber  String @unique
+  model        String
+  manufacturer String
+  year Int
+  type String
+  simNumber String
+  deviceId String
+  driverId String? @db.ObjectId
+  driver User? @relation(fields: [driverId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
