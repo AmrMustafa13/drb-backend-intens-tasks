@@ -1,169 +1,57 @@
-# DRB Backend Internship Tasks
+# DRB Backend Tasks
 
-Welcome to the DRB Backend Internship program! This repository contains weekly tasks designed to enhance your backend development skills.
+## Features
 
-## How to Get Started
+- User registration and login
+- JWT-based authentication (Access & Refresh tokens)
+- User profile management
+- Password change functionality
+- Secure cookie-based refresh token storage
+- MongoDB database integration
+- Swagger API documentation
 
-1. **Fork this repository** to your GitHub account
-2. **Clone your forked repository** to your local machine
-3. **Create a branch** named `week-X` (where X is the week number)
-4. **Complete the task** on your branch
-5. **Push your changes** to your forked repository
-6. **Create a Pull Request** back to the main repository when ready for review
+## Installation
 
----
+1. **Clone the repository**
 
-## Week 1: Authentication Module (Nov 11 - Nov 14, 2025)
+   ```bash
+   git clone <repository-url>
+   cd drb-backend-tasks
+   ```
 
-### Task Overview
+2. **Install dependencies**
 
-Build a complete authentication system using **NestJS**, **TypeScript**, and **MongoDB** with **JWT-based authentication**.
+   ```bash
+   npm install
+   ```
 
-### Technical Stack
+3. **Set up environment variables**
 
-- **Framework**: NestJS
-- **Language**: TypeScript
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
+   Write environment variables based on `.env.example` file
 
-### Required Features
+4. **Start MongoDB**
 
-#### 1. User Registration
+   Make sure MongoDB is running on your machine:
 
-- **Endpoint**: `POST /auth/register`
-- **Required Fields**:
-  - Email (must be unique and valid)
-  - Password (minimum 8 characters, with validation)
-  - Name
-  - Optional: Phone number, role
-- **Validations**:
-  - Email format validation
-  - Password strength requirements
-  - Check for existing user
-- **Response**: User object (without password) + Access token
+   ```bash
+   # If using MongoDB Community Edition
+   mongod
+   ```
 
-#### 2. User Login
+## Running the Application
 
-- **Endpoint**: `POST /auth/login`
-- **Required Fields**:
-  - Email
-  - Password
-- **Validations**:
-  - Verify credentials
-  - Check if user exists
-- **Response**: Access token + Refresh token
+### Development/Watch Mode
 
-#### 3. Get Current User Profile
+```bash
+npm run start:dev
+```
 
-- **Endpoint**: `GET /auth/profile`
-- **Authentication**: Required (JWT)
-- **Response**: Current user's profile information
+The application will be available at `http://localhost:3000`
 
-#### 4. Update Profile
+## API Documentation
 
-- **Endpoint**: `PATCH /auth/profile`
-- **Authentication**: Required (JWT)
-- **Allowed Updates**:
-  - Name
-  - Phone number
-  - Other non-sensitive fields
-- **Response**: Updated user object
+Once the application is running, you can access the Swagger documentation at:
 
-#### 5. Change Password
-
-- **Endpoint**: `PATCH /auth/change-password`
-- **Authentication**: Required (JWT)
-- **Required Fields**:
-  - Current password
-  - New password
-- **Validations**:
-  - Verify current password
-  - Validate new password strength
-- **Response**: Success message
-
-#### 6. Refresh Token
-
-- **Endpoint**: `POST /auth/refresh`
-- **Required Fields**:
-  - Refresh token
-- **Response**: New access token
-
-#### 7. Logout
-
-- **Endpoint**: `POST /auth/logout`
-- **Authentication**: Required (JWT)
-- **Response**: Success message
-
-### Additional Requirements
-
-#### Security Features
-
-- ✅ Password hashing using bcrypt
-- ✅ JWT token generation and validation
-- ✅ Refresh token mechanism
-- ✅ Protected routes using Guards
-- ✅ Input validation and sanitization
-- ✅ Error handling and appropriate status codes
-
-#### Code Quality
-
-- ✅ Follow NestJS best practices
-- ✅ Proper project structure (modules, controllers, services)
-- ✅ Use DTOs (Data Transfer Objects) for validation
-- ✅ Use Decorators for route protection
-- ✅ Environment variables for sensitive data (.env file)
-- ✅ Clean and readable code with comments
-
-#### Database Schema
-
-- User model should include:
-  - `_id` (MongoDB ObjectId)
-  - `email` (unique, required)
-  - `password` (hashed, required)
-  - `name` (required)
-  - `phone` (optional)
-  - `role` (default: 'user')
-  - `refreshToken` (optional, for refresh mechanism)
-  - `createdAt` (timestamp)
-  - `updatedAt` (timestamp)
-
-### Deliverables
-
-1. **Complete NestJS Project**
-
-   - All endpoints implemented and working
-   - Proper folder structure
-   - Configuration files (package.json, tsconfig.json, etc.)
-
-2. **Documentation**
-
-   - README with setup instructions
-   - **Swagger API documentation** integrated into the project
-   - Environment variables documentation
-
-### Evaluation Criteria
-
-- ✅ All endpoints working correctly
-- ✅ Proper error handling
-- ✅ Security best practices implemented
-- ✅ Code organization and structure
-- ✅ Validation and data sanitization
-- ✅ Documentation quality
-- ✅ Git commit history (meaningful commits)
-
-### Submission
-
-1. Push all your code to the `week-1` branch in your forked repository
-2. Create a Pull Request to the main repository
-3. Include a detailed README with setup instructions
-4. Add any additional notes or challenges faced in the PR description
-
-**Deadline**: November 14, 2025
-
----
-
-## Questions?
-
-If you have any questions or need clarification, please reach out to me on WhatsApp.
-
-Good luck! 🚀
+```
+http://localhost:3000/docs
+```
